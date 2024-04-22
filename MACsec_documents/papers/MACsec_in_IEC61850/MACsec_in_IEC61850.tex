@@ -13,7 +13,7 @@
 
 \begin{document}
 
-\title{Assessment of a MACsec-based Security Implementation in critical Infrastructure Communication}
+\title{Assessment of a MACsec-based security system for use in critical Infrastructure Communication}
 
 \author{\IEEEauthorblockN{Lukas F{\"u}reder}
     \IEEEauthorblockA{\textit{Technical University of Applied Sciences Regensburg (OTH)} \\
@@ -42,9 +42,23 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      Start of the Text      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+Companies that are classified as critical infrastructure as for example electricity grids, power plants and their corresponding distribution systems, 
+constitute a vulnerability which can be exploited to disrupt the supply of basic resources to entire countries. For this reason, laws such as the Network 
+and Information Security Act (NIS-2) \cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} of the German Federal Office for 
+Information Security (BSI) demand a unified level of cybersecurity for these entities. 
+
+\begin{verbatim}
+-- HIER NOCH WEITER ZU IT 2.0 UND NIS-2
+\end{verbatim}
+
+As basis for communication predominantly used in substations and later on in smartgrids, the International Electrotechnical Comission (IEC) publishes 
+and maintains the IEC 61850 standard \cite{IEC61850:2023}, which is used to transmit diagnostical information, measurement information or control signals 
+between Supervisory Control and Data Acquisition (SCADA) entities and the associated substation components. The major advantage here consists of the 
+object-oriented data structure specified in this standard, which enables the integration of various components developted by different vendors 
+\cite[p. 5643]{Review_IEC62351:2019}. 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Works        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Works}
 
 
