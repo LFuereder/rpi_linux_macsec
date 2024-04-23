@@ -42,28 +42,21 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      Start of the Text      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-Companies that are classified as critical infrastructure as for example electricity grids, power plants and their corresponding distribution systems, 
-constitute a vulnerability which can be exploited to disrupt the supply of basic resources to entire countries. For this reason, laws such as the Network 
-and Information Security Act (NIS-2) \cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} of the German Federal Office for 
-Information Security (BSI) demand a unified level of cybersecurity for these entities. 
+\noindent Companies that are classified as critical infrastructure as for example water supply facilities, power plants and their corresponding 
+distribution systems, can constitute a vulnerability which may be exploited to disrupt the supply of basic resources to entire countries. For this reason, 
+laws such as the Network and Information Security Act (NIS-2) \cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} of the 
+German Federal Office for Information Security (BSI) demand a unified level of cybersecurity for these entities. In these regulations, the councils 
+prescribe that the companies will be required to implement security features to detect and prevent intrusions, as well as remove faults caused through 
+intrusion attempts during system runtime. \cite[§11 (1d)]{IT-Gesetz_2:2021} Additionally the extension of this paragraph dictates, that these companies 
+are obliged to provide proof of compliance with the safety requirements in a two year period. \cite[§11 (1e)]{IT-Gesetz_2:2021} This decision is intended 
+to ensure that the security systems will continue to work with adapting changes of the latest technologies in the future. 
 
-\begin{verbatim}
--- HIER NOCH WEITER ZU IT 2.0 UND NIS-2
-\end{verbatim}
-
-As basis for communication predominantly used in substations and later on in smartgrids, the International Electrotechnical Comission (IEC) publishes 
-and maintains the IEC 61850 standard \cite{IEC61850:2023}, which is used to transmit diagnostical information, measurement information or control signals 
-between Supervisory Control and Data Acquisition (SCADA) entities and the associated substation components. The major advantage here consists of the 
-object-oriented data structure specified in this standard, which enables the integration of various components developted by different vendors 
-\cite[p. 5643]{Review_IEC62351:2019}. 
-
-\begin{verbatim}
--- HIER NOCH WEITER MIT IEC61850
-\end{verbatim}
-
-\begin{verbatim}
--- HIER NOCH WEITER MIT IEC62351
-\end{verbatim}
+\smallskip
+This paper evaluates the currently established implementation of protection systems securing communication in Substation Automation Systems (SASs). 
+Following this ... . Among other stadards used for communication is SASs, the facilities utilize the IEC 61850 standard, which is published and maintained by the International Electrotechnical Comission 
+(IEC). This standard is used to transmit diagnostical information, measurement information or control signals between Supervisory Control and Data 
+Acquisition (SCADA) entities and the associated substation components. The major advantage here consists of the object-oriented data structure specified 
+in this standard, which enables the integration of various components developted by different vendors \cite[p. 5643]{Review_IEC62351:2019}. 
 
 \begin{verbatim}
 -- HIER NOCH WEITER MIT MACSEC
@@ -80,7 +73,17 @@ method of the communication inside a substation as well as the associated securi
 security standard. The following related works display these important aspects and are therefore relevant for the implementation of an experimental set 
 up for MACsec secured industrial communication.
 
+Moreira et al. \cite{Cybersecurity_Substation:2016}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Fundamentals         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Fundamentals of the IEC Standards}
+\begin{verbatim}
+-- HIER NOCH WEITER MIT IEC61850
+\end{verbatim}
+    
+\begin{verbatim}
+-- HIER NOCH WEITER MIT IEC62351
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
