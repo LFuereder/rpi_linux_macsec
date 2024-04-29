@@ -61,30 +61,11 @@ thereby provides a brief overview of the communication standard used in these fa
 special focus placed on the different message types and their respective protection. Chapter \ref{chapter:implementation} explains the test setup used 
 to measure the efficiency of the MACsec-based security system. Lastly the data gathered from this is then evaluated in chapter \ref{chapter:evaluation}. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Related Works}
-\label{chapter:relatedWork}
-\noindent To assess the operating principal of a MACsec-based security system in IEC 61850 compliant communication it is necessary to understand both the 
-working method of the communication inside a substation as well as the corresponding functionality of the MACsec security standard. The following related 
-works display these important aspects and are therefore relevant for the implementation of an experimental set up for MACsec secured industrial communication.
-
-\smallskip
-Mackiewicz \cite{IEC61850_Overview:2006} describes the overall usage of the IEC 61850 protocol by displaying key features as well as the general aspects of 
-IEC 61850 compliant communication. Since this standard represents a core part of the communication inside of power grid systems, it is vital to understand 
-the corresponding aspects such as communication paths, model structures or data addressing in order to design a representative test environment. 
-
-\smallskip
-Hussain et al. \cite{Review_IEC62351:2019} published a paper assessing the IEC 62351 standard and its security mechanisms towards IEC 61850 compliant 
-messaging. The publication initially describes the basic values and security goals of the safety standard and, building on this, which attacks can potentially 
-be carried out on IEC 1850 messages to manipulate the internal workings of a SAS. At this point the paper primarily focuses on the Ethernet-based message types 
-Generic Object Oriented Substation Event (GOOSE) and Sampled Values (SV) and the associated decision not to encrypt them due to strict time delivery requirements.  
-
-\smallskip
-Moreira et al. \cite{Cybersecurity_Substation:2016}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Fundamentals         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview of the IEC 61850 \& IEC 62351 Standard}
+\section{Background}
+
+
+\subsection{Overview of the IEC 61850 \& IEC 62351 Standard}
 \label{chapter:fundamentalsIEC}
 Among other stadards used for communication is SASs, the facilities utilize the IEC 61850 standard, which is published and maintained by the International 
 Electrotechnical Comission (IEC). This standard is used to transmit diagnostical information, measurement information or control signals between 
@@ -94,6 +75,43 @@ data structure specified in this standard, which enables the integration of vari
 \begin{verbatim}
 -- HIER NOCH WEITER MIT IEC61850 & IEC62351
 \end{verbatim}
+
+\subsection{Fundamentals of the MACsec Security System}
+
+\begin{verbatim}
+-- HIER NOCH WEITER MIT MACsec
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Works}
+\label{chapter:relatedWork}
+\noindent To assess the operating principal of a MACsec-based security system in IEC 61850 compliant communication it is necessary to understand both 
+the working method of the communication inside a substation as well as the corresponding functionality of the MACsec security standard. The following 
+related works display these important aspects and are therefore relevant for the implementation of an experimental set up for MACsec secured industrial 
+communication.
+
+\smallskip
+Mackiewicz \cite{IEC61850_Overview:2006} describes the overall usage of the IEC 61850 protocol by displaying key features as well as the general aspects 
+of IEC 61850 compliant communication. Since this standard represents a core part of the communication inside of power grid systems, it is vital to 
+understand the corresponding aspects such as communication paths, model structures or data addressing in order to design a representative test environment. 
+
+\smallskip
+Hussain  \textit{et al.} \cite{Review_IEC62351:2019} published a paper assessing the IEC 62351 standard and its security mechanisms towards IEC 61850 
+compliant messaging. The publication initially describes the basic values and security goals of the safety standard and, building on this, which attacks 
+can potentially be carried out on IEC 1850 messages to manipulate the internal workings of a SAS. At this point the paper primarily focuses on the 
+Ethernet-based message types Generic Object Oriented Substation Event (GOOSE) and Sampled Values (SV) and the associated decision not to encrypt them due 
+to strict time delivery requirements.  
+
+\smallskip
+Moreira  \textit{et al.} \cite{Cybersecurity_Substation:2016} evaluate various approaches to introduce cyber security in SASs. Initially, a brief outline 
+of the communication structures in substations is presented. Building on this, various established security approaches are explained and evaluated based 
+on the protection objectives of the IEC 62351 standard. The authors also point out possible implementation problems, such as incompatibilities between 
+the security systems and the communication protocols or the handling of redundant packets inside ring-topology networks. In the further course of the 
+paper, they present the idea of MACsec based communication security in SASs and the and the associated advantages and challenges that arise with it. 
+
+\smallskip
+Lackorzynski \textit{et al.} \cite{MACsecIndustrialOptimization:2020}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
