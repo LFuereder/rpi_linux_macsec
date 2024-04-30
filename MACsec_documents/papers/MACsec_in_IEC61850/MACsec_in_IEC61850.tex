@@ -111,7 +111,17 @@ the security systems and the communication protocols or the handling of redundan
 paper, they present the idea of MACsec based communication security in SASs and the and the associated advantages and challenges that arise with it. 
 
 \smallskip
-Lackorzynski \textit{et al.} \cite{MACsecIndustrialOptimization:2020}
+Lackorzynski \textit{et al.} \cite{MACsecIndustrialOptimization:2020} proposed modifications of the IEEE 802.1AE standard to improve MACsec for usage in 
+industrial applications. In particular, the fragmentation of Ethernet frames was considered. This procedure is necessary, if messages exceed the Maximum 
+Transmission Unit (MTU) and are thus possibly discarded by the recipient of the message. The presented implementation ensures this parameter and spits 
+messages into multiple frames, if it is exceeded. Additionally the authors discuss the usage of different cipher suits instead of the \texttt{AES-GCM 128/256} 
+specified in the MACsec standard. The evaluation of their study shows that the ChaCha20-Poly1305 cipher is a promising alternative for industrial 
+applications.
+
+\smallskip 
+Building on the findings of Moreira \cite{Cybersecurity_Substation:2016} and Lackorzynski \cite{MACsecIndustrialOptimization:2020} we formulate the 
+evaluation of MACsec carried out for use in substations and other power systems based on the IEC 61850 standard. Along with this, we discuss the 
+advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 standard based on our findings. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
