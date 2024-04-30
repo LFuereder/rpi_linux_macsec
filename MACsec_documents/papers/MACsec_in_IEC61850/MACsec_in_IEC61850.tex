@@ -65,18 +65,30 @@ to measure the efficiency of the MACsec-based security system. Lastly the data g
 \section{Background}
 
 
-\subsection{Overview of the IEC 61850 \& IEC 62351 Standard}
+\subsection{Overview of the IEC 61850 Standard}
 \label{chapter:fundamentalsIEC}
-Among other stadards used for communication is SASs, the facilities utilize the IEC 61850 standard, which is published and maintained by the International 
-Electrotechnical Comission (IEC). This standard is used to transmit diagnostical information, measurement information or control signals between 
-Supervisory Control and Data Acquisition (SCADA) entities and the associated substation components. The major advantage here consists of the object-oriented 
-data structure specified in this standard, which enables the integration of various components developted by different vendors \cite[p. 5643]{Review_IEC62351:2019}. 
+Among other standards used for communication is industrial applications, power systems primarily utilize the IEC 61850 standard \cite{IEC61850:2023}, 
+which is published and maintained by the International Electrotechnical Comission (IEC) \cite{IEC61850_Overview:2006}. This standard specifies the 
+transmission of diagnostical information, measurement values or control signals among devices structured in a three level architecture 
+\cite{SGRWin_IEC61850Architecture:2021}, as displayed in Figure \ref{image:IEC61850Architecture}. The major advantage here consists of the object-oriented 
+data structure defined in this standard, which makes the integration of various components developted by different vendors possible 
+\cite[p. 5643]{Review_IEC62351:2019}. 
 
-\begin{verbatim}
--- HIER NOCH WEITER MIT IEC61850 & IEC62351
-\end{verbatim}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/IEC61850_Architecture.png}
+    \caption{Overview of the three architecture levels in IEC 61850 \cite{SGRWin_IEC61850Architecture:2021}}
+    \label{image:IEC61850Architecture}
+\end{figure}
 
-\subsection{Fundamentals of the MACsec Security System}
+At the lowest point, the process level contains devices tasked with the actual power management. Examples for these are: transformers, circuit breakers, 
+Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level components periodically 
+publish measurement information to the subscribing communication partner in the Bay Level via Sampled-Value (SV) packages \cite{TyphoonHIL_IEC61850SV:2021}. 
+
+The devices located in the Station Level
+
+
+\subsection{Fundamentals of the MACsec Security Standard}
 
 \begin{verbatim}
 -- HIER NOCH WEITER MIT MACsec
