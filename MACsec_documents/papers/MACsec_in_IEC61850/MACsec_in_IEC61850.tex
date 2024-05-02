@@ -62,18 +62,18 @@ to ensure the future working of the security systems with respect to adapting ch
 \smallskip
 This paper evaluates the currently established implementation of protection systems securing communication in Substation Automation Systems (SASs) and 
 thereby provides a brief overview of the communication standard used in these facilities. Following this we propose a Media Access Control Security 
-(MACsec) based security system with the security goals set for these applications. The further course of the paper is structured as follows: Chapter 
+(MACsec) based security system with the security goals set for these applications. The further course of the paper is structured as follows: 
+Chapter \ref{chapter:fundamentals} provides a general overview of the IEC 61850 communication standard and the associated  message types. Following this a 
+brief introduction into the MACsec security standard is provided, which presents the relevant features used in the implementation later on. Chapter 
 \ref{chapter:relatedWork} displays relevant information presented by related works assessing the current state of technology in this topic. Chapter 
-\ref{chapter:fundamentalsIEC} provides a general overview of the IEC 61850 communication standard and the associated IEC 62351 safety standard with 
-special focus placed on the different message types and their respective protection. Chapter \ref{chapter:implementation} explains the test setup used 
-to measure the efficiency of the MACsec-based security system. Lastly the data gathered from this is then evaluated in chapter \ref{chapter:evaluation}. 
+\ref{chapter:implementation} explains the test setup used to measure the efficiency of the MACsec-based security system. Lastly the data gathered from 
+this is then evaluated in chapter \ref{chapter:evaluation}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Fundamentals         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Background}
-
+\label{chapter:fundamentals}
 
 \subsection{Overview of the IEC 61850 Standard}
-\label{chapter:fundamentalsIEC}
 Among other standards used for communication is industrial applications, power systems primarily utilize the IEC 61850 standard \cite{IEC61850:2023}, 
 which is published and maintained by the International Electrotechnical Comission (IEC) \cite{IEC61850_Overview:2006}. This standard specifies the 
 transmission of diagnostical information, measurement values or control signals among devices structured in a three level architecture 
