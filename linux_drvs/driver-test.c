@@ -49,7 +49,7 @@ static int pci_test_device_probe(struct pci_dev *dev, const struct pci_device_id
         return status;
     }
 
-    status = pcim_iomap_regions(dev, BIT(0), KBUILD_MODNAME);
+    status = pcim_iomap_regions(dev, BIT(1), KBUILD_MODNAME);
     if( status < 0)
     {
         printk("[ ERROR ]   Could not enable pci_test_driver\n");
@@ -59,7 +59,7 @@ static int pci_test_device_probe(struct pci_dev *dev, const struct pci_device_id
     printk("[ INFO ]   Successfully enabled pci_test_driver\n");
 
 
-    ptr_mem0 = pcim_iomap_table(dev)[0];
+    ptr_mem0 = pcim_iomap_table(dev)[1];
     if(ptr_mem0 == NULL)
     {
         printk("[ ERROR ]   Invalid pointer for BAR0\n");

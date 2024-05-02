@@ -1,5 +1,12 @@
+% -------------- Single Column Template --------------------------- %
+%\documentclass[journal,onecolumn]{IEEEtran}
+%\hyphenation{op-tical net-works semi-conduc-tor}
+
+% -------------- Double Column Template --------------------------- %
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
+
+
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -82,11 +89,29 @@ data structure defined in this standard, which makes the integration of various 
 \end{figure}
 
 At the lowest point, the process level contains devices tasked with the actual power management. Examples for these are: transformers, circuit breakers, 
-Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level components periodically 
-publish measurement information to the subscribing communication partner in the Bay Level via Sampled-Value (SV) packages \cite{TyphoonHIL_IEC61850SV:2021}. 
+Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level components 
+periodically publish measurement information to all subscribing communication partner in the Bay Level via Sampled-Value (SV) packages 
+\cite{TyphoonHIL_IEC61850SV:2021}. This communication involves LAN-internal multicast packets, which take place exclusively on the second layer 
+(=Data Link Layer) of the OSI model \cite{TyphoonHIL_IEC61850SV:2021}. 
 
-The devices located in the Station Level
+\smallskip
+The Bay Level above contains the Intelligent Electronic Devices (IEDs), each of which represents a transformation field in the substation 
+\cite[p. 39]{IEC61850-7-1:2011}. The IEDs gather the measurement data from the process level and initially processes them. The resulting information 
+is then communicated through Manufacturing Message Specification (MMS) packages to other IEDs and the Station Level components \cite[p. 44]{IEC61850-8-1:2011}. 
+Simultaniously the IEDs receive control signals from the Station Level, which are also transmitted via MMS packages \cite{trafficGen_IEC61850:2011}. 
+As the Station Level components are not necessarily located in the same LAN as the IEDs, the MMS messaging is implmented through TCP packages on the 
+fourth layer (=Transport Layer) of the OSI model \cite[p. 45]{IEC61850-8-1:2011}. In addition to the MMS messaging, the IEDs use Generic Object Oriented 
+Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Simmilar to SV, GOOSE messages are implemented through broadcast 
+Ethernet packages in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
 
+\smallskip
+The devices located in the Station Level of the architecture are responsible for controlling the SAS. This is achieved through MMS packages adressed 
+to specific IEDs and the presentation of the processed information in graphical illustrations to the user \cite{SGRWin_IEC61850Architecture:2021}. 
+For this, the Station Level components typically consist of a Supervisory Control and Data Acquisition (SCADA) component and a Human-Machine-Interface 
+(HMI). Lastly, as displayed in Figure \ref{image:IEC61850Architecture}, it is possible to transmit GOOSE messages to the Station Level components. For 
+this the IEC 61850-90-5 standard \cite{IEC61850-90-5:2012} defines a routable version of the layer two GOOSE frame. For this purpose, the Ethernet 
+packets are extended by adding network and transport layer headers to form a UDP package, which is routable throughout a Wide Area Network (WAN) 
+\cite{routable_GOOSE_SV:2020}.
 
 \subsection{Fundamentals of the MACsec Security Standard}
 
