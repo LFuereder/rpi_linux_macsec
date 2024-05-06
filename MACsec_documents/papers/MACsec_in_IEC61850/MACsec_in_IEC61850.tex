@@ -118,8 +118,8 @@ packets are extended by adding network and transport layer headers to form a UDP
 to security standards operating in higher layers of the TCP/IP stack (e.g. Transport Layer Security (TLS)), which provide End-to-end encryption, MACsec 
 verifies the integrity and authenticity of a packet within each hop of the transmission \cite{Cybersecurity_Substation:2016}. However, this lower layer 
 implementation close to the PHY enables MACsec to secure communication, which takes place exclusively in Ethernet packets (e.g. SV \& GOOSE). The following 
-paragraph explains the most important aspects of the MACsec standard, which are responsible for ensuring the authenticity, integrity and confidentiality of 
-the transmitted packets.
+paragraph explains the most important aspects of the MACsec standard, which are responsible for ensuring the authenticity, integrity and confidentiality 
+of the transmitted packets.
 
 \begin{figure}[h]
     \centering
@@ -131,11 +131,14 @@ the transmitted packets.
 As displayed in Figure \ref{image:MACsecEntities}, the communicating devices are initially grouped in Connectivity Associations (CAs), which represent 
 the logical separation of secured communication areas \cite[p. 35]{IEEE-802-1AE:2018}. Each member of a CA possesses the associated Connectivity 
 Association Key (CAK), which is later used to generate the individual session keys. Simmilar to other encryption systems, the CAK acts as a shared 
-secret between the individual parties. The distribution of the CAK among the participants is only specified as a brief overview of the established 
-methods \cite[p. 230]{IEEE-802-1AE:2018}. In our case, we utilize pre-shared keys to configure the CA.
+secret between the individual parties. In the IEEE 802.1AE standard the distribution of the CAK among the participants is only specified as a brief 
+overview of the established methods \cite[p. 230]{IEEE-802-1AE:2018}. In our case, we utilize pre-shared keys to configure the CA in the test set up 
+explained in chapter \ref{chapter:implementation}.
 
 \smallskip
-With the CAK
+Within a CA, the connections between the communicating devices are referred to as Secure Channels (SCs). An SC is a unidirectional connection from a 
+transmitter to one or more receivers. Each SC can be identified by the Secure Channel Identifier (SCI), which is added to the header of the MACsec 
+secured frame \cite[p. 43]{IEEE-802-1AE:2018}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Works}
@@ -194,6 +197,6 @@ advantages and disadvantages of MACsec in comparison with the security goals of 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     Begin of References      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \printbibliography
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
