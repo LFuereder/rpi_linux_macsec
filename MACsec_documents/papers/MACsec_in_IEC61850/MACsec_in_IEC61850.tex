@@ -65,7 +65,7 @@ thereby provides a brief overview of the communication standard used in these fa
 (MACsec) based security system with the security goals set for these applications. The further course of the paper is structured as follows: 
 Chapter \ref{chapter:fundamentals} provides a general overview of the IEC 61850 communication standard and the associated  message types. Following this a 
 brief introduction into the MACsec security standard is provided, which presents the relevant features used in the implementation later on. Chapter 
-\ref{chapter:relatedWork} displays relevant information presented by related works assessing the current state of technology in this topic. Chapter 
+\ref{chapter:relatedWork} displays relevant information presented by related work assessing the current state of technology in this topic. Chapter 
 \ref{chapter:implementation} explains the test setup used to measure the efficiency of the MACsec-based security system. Lastly the data gathered from 
 this is then evaluated in chapter \ref{chapter:evaluation}. 
 
@@ -108,8 +108,8 @@ Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
 The devices located in the Station Level of the architecture are responsible for controlling the SAS. This is achieved through MMS packets adressed 
 to specific IEDs and the presentation of the processed information in graphical illustrations to the user \cite{SGRWin_IEC61850Architecture:2021}. 
 For this, the Station Level components typically consist of a Supervisory Control and Data Acquisition (SCADA) component and a Human-Machine-Interface 
-(HMI). Lastly, as displayed in Figure \ref{image:IEC61850Architecture}, it is possible to transmit GOOSE messages to the Station Level components. For 
-this the IEC 61850-90-5 standard \cite{IEC61850-90-5:2012} defines a routable version of the layer two GOOSE frame. For this purpose, the Ethernet 
+(HMI). Lastly, as displayed in Figure \ref{image:IEC61850Architecture}, it is possible to transmit GOOSE messages to the Station Level components. 
+For this the IEC 61850-90-5 standard \cite{IEC61850-90-5:2012} defines a routable version of the layer two GOOSE frame. For this purpose, the Ethernet 
 packets are extended by adding network and transport layer headers to form a UDP packet, which is routable throughout a Wide Area Network (WAN) 
 \cite{routable_GOOSE_SV:2020}.
 
@@ -131,21 +131,31 @@ of the transmitted packets.
 As displayed in Figure \ref{image:MACsecEntities}, the communicating devices are initially grouped in Connectivity Associations (CAs), which represent 
 the logical separation of secured communication areas \cite[p. 35]{IEEE-802-1AE:2018}. Each member of a CA possesses the associated Connectivity 
 Association Key (CAK), which is later used to generate the individual session keys. Simmilar to other encryption systems, the CAK acts as a shared 
-secret between the individual parties. In the IEEE 802.1AE standard the distribution of the CAK among the participants is only specified as a brief 
-overview of the established methods \cite[p. 230]{IEEE-802-1AE:2018}. In our case, we utilize pre-shared keys to configure the CA in the test set up 
-explained in chapter \ref{chapter:implementation}.
+secret between the individual parties and is therefore used to verify the authenticity of incoming MACsec frames. In the IEEE 802.1AE standard the 
+distribution of the CAK among the participants is only specified as a brief overview of the established methods \cite[p. 230]{IEEE-802-1AE:2018}. In our 
+case, we utilize pre-shared keys to configure the CA in the test set up explained in chapter \ref{chapter:implementation}.
 
 \smallskip
-Within a CA, the connections between the communicating devices are referred to as Secure Channels (SCs). An SC is a unidirectional connection from a 
-transmitter to one or more receivers. Each SC can be identified by the Secure Channel Identifier (SCI), which is added to the header of the MACsec 
-secured frame \cite[p. 43]{IEEE-802-1AE:2018}. 
+Within a CA, the connections between the communicating devices are referred to as Secure Channels (SCs). As displayed in Figure \ref{image:MACsecEntities}, 
+a SC is a unidirectional connection from a transmitter to one or more receivers. Each SC can be identified by the Secure Channel Identifier (SCI), which 
+is added to the MACsec specific field in the secured frame \cite[p. 43]{IEEE-802-1AE:2018}. During transmission on a SC, the packets are sent within Security 
+Associations (SAs). These are time intervals in which a single Secure Association Key (SAK) is valid \cite[p. 44]{IEEE-802-1AE:2018}. The SAK is the session 
+key, which is derived from the previously described CAK and is only valid for up to ${(2^{32} -1)}$ packets, after which a new SAK needs to be generated 
+\cite[p. 66]{IEEE-802-1AE:2018}. To be able to monitor the number of transmitted packets in an SA, the MACsec frame contains a packet number field, which 
+is incremented with each subsequent packet. This field aditionally ensures, that no replay attacks can be carried out on the network \cite[p. 145]{IEEE-802-1AE:2018}. 
+
+\smallskip
+To ensure confidentiality and integrity of the transmitted frames, MACsec utilizes Authenticated Encryption with Associated Data (AEAD) cipher suites. 
+These encryption system typically consist of a symmetric block cipher, wich provides the option to encrypt the payload of the message and generates a 
+Message Authentication Code (MAC) over the entire message \cite{GOOSE_confidentiality_integrity:2020}. For usage the IEEE 802.1AE standard specifies four 
+variations of the Advances Encryption System in Galois/Counter Mode (AES-GCM) \cite[p. 143ff]{IEEE-802-1AE:2018}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Related Works}
+\section{Related Work}
 \label{chapter:relatedWork}
 \noindent To assess the operating principal of a MACsec-based security system in IEC 61850 compliant communication it is necessary to understand both 
 the working method of the communication inside a substation as well as the corresponding functionality of the MACsec security standard. The following 
-related works display these important aspects and are therefore relevant for the implementation of an experimental set up for MACsec secured industrial 
+related work display these important aspects and are therefore relevant for the implementation of an experimental set up for MACsec secured industrial 
 communication.
 
 \smallskip
