@@ -63,8 +63,8 @@ to ensure the future working of the security systems with respect to adapting ch
 This paper evaluates the currently established implementation of protection systems securing communication in Substation Automation Systems (SASs) and 
 thereby provides a brief overview of the communication standard used in these facilities. Following this we propose a Media Access Control Security 
 (MACsec) based security system with the security goals set for these applications. The further course of the paper is structured as follows: 
-Chapter \ref{chapter:fundamentals} provides a general overview of the IEC 61850 communication standard and the associated  message types. Following this a 
-brief introduction into the MACsec security standard is provided, which presents the relevant features used in the implementation later on. Chapter 
+Chapter \ref{chapter:fundamentals} provides a general overview of the IEC 61850 communication standard and the associated  message types. Following this 
+a brief introduction into the MACsec security standard is provided, which presents the relevant features used in the implementation later on. Chapter 
 \ref{chapter:relatedWork} displays relevant information presented by related work assessing the current state of technology in this topic. Chapter 
 \ref{chapter:implementation} explains the test setup used to measure the efficiency of the MACsec-based security system. Lastly the data gathered from 
 this is then evaluated in chapter \ref{chapter:evaluation}. 
@@ -74,6 +74,7 @@ this is then evaluated in chapter \ref{chapter:evaluation}.
 \label{chapter:fundamentals}
 
 \subsection{Overview of the IEC 61850 Standard}
+\label{subchapter:IEC61850}
 Among other standards used for communication is industrial applications, power systems primarily utilize the IEC 61850 standard \cite{IEC61850:2023}, 
 which is published and maintained by the International Electrotechnical Comission (IEC) \cite{IEC61850_Overview:2006}. This standard specifies the 
 transmission of diagnostical information, measurement values or control signals among devices structured in a three level architecture 
@@ -113,13 +114,21 @@ For this the IEC 61850-90-5 standard \cite{IEC61850-90-5:2012} defines a routabl
 packets are extended by adding network and transport layer headers to form a UDP packet, which is routable throughout a Wide Area Network (WAN) 
 \cite{routable_GOOSE_SV:2020}.
 
+%----------------------------------------------------------------------------------------------------------------------------------------------------%
+\subsection{Message Security according to IEC 62351}
+\noindent Building on the IEC 61850 message types described in Chapter \ref{subchapter:IEC61850}, the IEC 62351 standard dictates security goals and 
+requirements for cybersecurity solutions. In order to evaluate the proposed MACsec solution for industrial applications correctly, we need to assess 
+the security functions according to the demands of the standard.
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{Fundamentals of the MACsec Security Standard}
 \noindent MACsec poses an information security standard, which protects messages on the second layer (=Data Link Layer) of the OSI model. In contrast 
 to security standards operating in higher layers of the TCP/IP stack (e.g. Transport Layer Security (TLS)), which provide End-to-end encryption, MACsec 
 verifies the integrity and authenticity of a packet within each hop of the transmission \cite{Cybersecurity_Substation:2016}. However, this lower layer 
-implementation close to the PHY enables MACsec to secure communication, which takes place exclusively in Ethernet packets (e.g. SV \& GOOSE). The following 
-paragraph explains the most important aspects of the MACsec standard, which are responsible for ensuring the authenticity, integrity and confidentiality 
-of the transmitted packets.
+implementation close to the PHY enables MACsec to secure communication, which takes place exclusively in Ethernet packets (e.g. SV \& GOOSE). The 
+following paragraph explains the most important aspects of the MACsec standard, which are responsible for ensuring the authenticity, integrity and 
+confidentiality of the transmitted packets.
 
 \begin{figure}[h]
     \centering
@@ -132,23 +141,24 @@ As displayed in Figure \ref{image:MACsecEntities}, the communicating devices are
 the logical separation of secured communication areas \cite[p. 35]{IEEE-802-1AE:2018}. Each member of a CA possesses the associated Connectivity 
 Association Key (CAK), which is later used to generate the individual session keys. Simmilar to other encryption systems, the CAK acts as a shared 
 secret between the individual parties and is therefore used to verify the authenticity of incoming MACsec frames. In the IEEE 802.1AE standard the 
-distribution of the CAK among the participants is only specified as a brief overview of the established methods \cite[p. 230]{IEEE-802-1AE:2018}. In our 
-case, we utilize pre-shared keys to configure the CA in the test set up explained in chapter \ref{chapter:implementation}.
+distribution of the CAK among the participants is only specified as a brief overview of the established methods \cite[p. 230]{IEEE-802-1AE:2018}. 
+In our case, we utilize pre-shared keys to configure the CA in the test set up explained in chapter \ref{chapter:implementation}.
 
 \smallskip
 Within a CA, the connections between the communicating devices are referred to as Secure Channels (SCs). As displayed in Figure \ref{image:MACsecEntities}, 
 a SC is a unidirectional connection from a transmitter to one or more receivers. Each SC can be identified by the Secure Channel Identifier (SCI), which 
-is added to the MACsec specific field in the secured frame \cite[p. 43]{IEEE-802-1AE:2018}. During transmission on a SC, the packets are sent within Security 
-Associations (SAs). These are time intervals in which a single Secure Association Key (SAK) is valid \cite[p. 44]{IEEE-802-1AE:2018}. The SAK is the session 
-key, which is derived from the previously described CAK and is only valid for up to ${(2^{32} -1)}$ packets, after which a new SAK needs to be generated 
-\cite[p. 66]{IEEE-802-1AE:2018}. To be able to monitor the number of transmitted packets in an SA, the MACsec frame contains a packet number field, which 
-is incremented with each subsequent packet. This field aditionally ensures, that no replay attacks can be carried out on the network \cite[p. 145]{IEEE-802-1AE:2018}. 
+is added to the MACsec specific field in the secured frame \cite[p. 43]{IEEE-802-1AE:2018}. During transmission on a SC, the packets are sent within 
+Security Associations (SAs). These are time intervals in which a single Secure Association Key (SAK) is valid \cite[p. 44]{IEEE-802-1AE:2018}. The SAK 
+is the session key, which is derived from the previously described CAK and is only valid for up to ${(2^{32} -1)}$ packets, after which a new SAK needs 
+to be generated \cite[p. 66]{IEEE-802-1AE:2018}. To be able to monitor the number of transmitted packets in an SA, the MACsec frame contains a packet 
+number field, which is incremented with each subsequent packet. This field aditionally ensures, that no replay attacks can be carried out on the network 
+\cite[p. 145]{IEEE-802-1AE:2018}. 
 
 \smallskip
 To ensure confidentiality and integrity of the transmitted frames, MACsec utilizes Authenticated Encryption with Associated Data (AEAD) cipher suites. 
 These encryption system typically consist of a symmetric block cipher, wich provides the option to encrypt the payload of the message and generates a 
-Message Authentication Code (MAC) over the entire message \cite{GOOSE_confidentiality_integrity:2020}. For usage the IEEE 802.1AE standard specifies four 
-variations of the Advances Encryption System in Galois/Counter Mode (AES-GCM) \cite[p. 143ff]{IEEE-802-1AE:2018}.
+Message Authentication Code (MAC) over the entire message \cite{GOOSE_confidentiality_integrity:2020}. For usage the IEEE 802.1AE standard specifies 
+four variations of the Advances Encryption System in Galois/Counter Mode (AES-GCM) \cite[p. 143ff]{IEEE-802-1AE:2018}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
@@ -178,12 +188,12 @@ the security systems and the communication protocols or the handling of redundan
 paper, they present the idea of MACsec based communication security in SASs and the and the associated advantages and challenges that arise with it. 
 
 \smallskip
-Lackorzynski \textit{et al.} \cite{MACsecIndustrialOptimization:2020} proposed modifications of the IEEE 802.1AE standard to improve MACsec for usage in 
-industrial applications. In particular, the fragmentation of Ethernet frames was considered. This procedure is necessary, if messages exceed the Maximum 
-Transmission Unit (MTU) and are thus possibly discarded by the recipient of the message. The presented implementation ensures this parameter and spits 
-messages into multiple frames, if it is exceeded. Additionally the authors discuss the usage of different cipher suits instead of the \texttt{AES-GCM 128/256} 
-specified in the MACsec standard. The evaluation of their study shows that the ChaCha20-Poly1305 cipher is a promising alternative for industrial 
-applications.
+Lackorzynski \textit{et al.} \cite{MACsecIndustrialOptimization:2020} proposed modifications of the IEEE 802.1AE standard to improve MACsec for usage 
+in industrial applications. In particular, the fragmentation of Ethernet frames was considered. This procedure is necessary, if messages exceed the 
+Maximum Transmission Unit (MTU) and are thus possibly discarded by the recipient of the message. The presented implementation ensures this parameter 
+and spits messages into multiple frames, if it is exceeded. Additionally the authors discuss the usage of different cipher suits instead of the 
+\texttt{AES-GCM 128/256} specified in the MACsec standard. The evaluation of their study shows that the ChaCha20-Poly1305 cipher is a promising alternative 
+for industrial applications.
 
 \smallskip 
 Building on the findings of Moreira \cite{Cybersecurity_Substation:2016} and Lackorzynski \cite{MACsecIndustrialOptimization:2020} we formulate the 
