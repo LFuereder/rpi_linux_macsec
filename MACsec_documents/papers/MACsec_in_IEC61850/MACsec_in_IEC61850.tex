@@ -192,16 +192,8 @@ understand the corresponding aspects such as communication paths, model structur
 \smallskip
 Hussain  \textit{et al.} \cite{Review_IEC62351:2019} published a paper assessing the IEC 62351 standard and its security mechanisms towards IEC 61850 
 compliant messaging. The publication initially describes the basic values and security goals of the safety standard and, building on this, which attacks 
-can potentially be carried out on IEC 1850 messages to manipulate the internal workings of a SAS. At this point the paper primarily focuses on the 
-Ethernet-based message types Generic Object Oriented Substation Event (GOOSE) and Sampled Values (SV) and the associated decision not to encrypt them due 
-to strict time delivery requirements.  
-
-\smallskip
-Moreira  \textit{et al.} \cite{Cybersecurity_Substation:2016} evaluate various approaches to introduce cyber security in SASs. Initially, a brief outline 
-of the communication structures in substations is presented. Building on this, various established security approaches are explained and evaluated based 
-on the protection objectives of the IEC 62351 standard. The authors also point out possible implementation problems, such as incompatibilities between 
-the security systems and the communication protocols or the handling of redundant packets inside ring-topology networks. In the further course of the 
-paper, they present the idea of MACsec based communication security in SASs and the and the associated advantages and challenges that arise with it. 
+can potentially be carried out on IEC 61850 messages to manipulate the internal workings of a SAS. At this point the paper primarily focuses on the 
+Ethernet-based message types GOOSE and SV and the associated decision not to encrypt them due to strict time delivery requirements.  
 
 \smallskip
 Lackorzynski \textit{et al.} \cite{MACsecIndustrialOptimization:2020} proposed modifications of the IEEE 802.1AE standard to improve MACsec for usage 
@@ -211,10 +203,25 @@ and spits messages into multiple frames, if it is exceeded. Additionally the aut
 AES-GCM 128/256 specified in the MACsec standard. The evaluation of their study shows that the ChaCha20-Poly1305 cipher is a promising alternative 
 for industrial applications.
 
+\smallskip
+Moreira  \textit{et al.} \cite{Cybersecurity_Substation:2016} evaluate various approaches to introduce cyber security in SASs. Initially, a brief outline 
+of the communication structures in substations is presented. Building on this, various established security approaches are explained and evaluated based 
+on the protection objectives of the IEC 62351 standard. The authors also point out possible implementation problems, such as incompatibilities between 
+the security systems and the communication protocols or the handling of redundant packets inside ring-topology networks. In the further course of the 
+paper, they present the idea of MACsec based communication security in SASs and the associated advantages and challenges that arise with it. 
+
+\smallskip
+Hussain \textit{et al.} \cite{GOOSE_confidentiality_integrity:2020} analyzed possible GOOSE security implementations based on their preceding review 
+of the IEC 62351 standard \cite{Review_IEC62351:2019}. Especially concerning the decision to abstain from implementing confidentiality in GOOSE messages, 
+the authors argue, that the critical payload of these messages demand encryption to provide efficient protection against attacks. However, in order to 
+meet the real-time requirements of the protocol, they suggest replacing the RSA signature with encryption using an AEAD cipher. In the further course 
+of the paper they compare encryption and signature times between different AEAD ciphers and conclude based on the measurement results, that these encryption 
+systems pose a promising solution, which provides the opportunity to encrypt the message while simultaniously  meeting the 3 ms timing requirement.
+
 \smallskip 
-Building on the findings of Moreira \cite{Cybersecurity_Substation:2016} and Lackorzynski \cite{MACsecIndustrialOptimization:2020} we formulate the 
-evaluation of MACsec carried out for use in substations and other power systems based on the IEC 61850 standard. Along with this, we discuss the 
-advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 standard based on our findings. 
+Building on the findings of Moreira \cite{Cybersecurity_Substation:2016} and Hussain \cite{GOOSE_confidentiality_integrity:2020}\cite{Review_IEC62351:2019} 
+we formulate the evaluation of MACsec carried out for use in substations and other power systems based on the IEC 61850 standard. Along with this, we 
+discuss the advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 standard based on our findings. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
