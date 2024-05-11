@@ -204,7 +204,7 @@ AES-GCM 128/256 specified in the MACsec standard. The evaluation of their study 
 for industrial applications.
 
 \smallskip
-Moreira  \textit{et al.} \cite{Cybersecurity_Substation:2016} evaluate various approaches to introduce cyber security in SASs. Initially, a brief outline 
+Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016} evaluate various approaches to introduce cyber security in SASs. Initially, a brief outline 
 of the communication structures in substations is presented. Building on this, various established security approaches are explained and evaluated based 
 on the protection objectives of the IEC 62351 standard. The authors also point out possible implementation problems, such as incompatibilities between 
 the security systems and the communication protocols or the handling of redundant packets inside ring-topology networks. In the further course of the 
@@ -219,9 +219,10 @@ of the paper they compare encryption and signature times between different AEAD 
 systems pose a promising solution, which provides the opportunity to encrypt the message while simultaniously  meeting the 3 ms timing requirement.
 
 \smallskip 
-Building on the findings of Moreira \cite{Cybersecurity_Substation:2016} and Hussain \cite{GOOSE_confidentiality_integrity:2020}\cite{Review_IEC62351:2019} 
-we formulate the evaluation of MACsec carried out for use in substations and other power systems based on the IEC 61850 standard. Along with this, we 
-discuss the advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 standard based on our findings. 
+Building on the theoretical proposition of Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016}, we formulate the evaluation of MACsec carried out 
+for use in substations and other power systems based on the IEC 61850 standard. Along with this, we consider the findings of Hussain \textit{et al.} 
+\cite{GOOSE_confidentiality_integrity:2020} in relation to the usage of Encrypt-then-MAC AEAD ciphers in the implementation of our MACsec test environment. 
+Hence, our experimental setup enables us to discuss the advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 standard. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
