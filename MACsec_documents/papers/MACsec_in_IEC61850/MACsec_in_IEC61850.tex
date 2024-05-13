@@ -89,8 +89,8 @@ data structure defined in this standard, which makes the integration of various 
     \label{image:IEC61850Architecture}
 \end{figure}
 
-At the lowest point, the process level contains devices tasked with the actual power management. Examples for these are: transformers, circuit breakers, 
-Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level components 
+\noindent At the lowest point, the process level contains devices tasked with the actual power management. Examples for these are: transformers, circuit 
+breakers, Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level components 
 periodically publish measurement information to all subscribing communication partner in the Bay Level via Sampled-Value (SV) packets 
 \cite{TyphoonHIL_IEC61850SV:2021}. This communication involves LAN-internal multicast packets, which take place exclusively on the second layer 
 (=Data Link Layer) of the Open System Interconnection (OSI) model \cite{TyphoonHIL_IEC61850SV:2021}. 
@@ -153,8 +153,8 @@ confidentiality of the transmitted packets.
     \label{image:MACsecEntities}
 \end{figure}
 
-As displayed in Figure \ref{image:MACsecEntities}, the communicating devices are initially grouped in Connectivity Associations (CAs), which represent 
-the logical separation of secured communication areas \cite[p. 35]{IEEE-802-1AE:2018}. Each member of a CA possesses the associated Connectivity 
+\noindent As displayed in Figure \ref{image:MACsecEntities}, the communicating devices are initially grouped in Connectivity Associations (CAs), which 
+represent the logical separation of secured communication areas \cite[p. 35]{IEEE-802-1AE:2018}. Each member of a CA possesses the associated Connectivity 
 Association Key (CAK), which is later used to generate the individual session keys. Simmilar to other encryption systems, the CAK acts as a shared 
 secret between the individual parties and is therefore used to verify the authenticity of incoming MACsec frames. In the IEEE 802.1AE standard the 
 distribution of the CAK among the participants is only specified as a brief overview of the established methods \cite[p. 230]{IEEE-802-1AE:2018}. 
@@ -219,14 +219,36 @@ of the paper they compare encryption and signature times between different AEAD 
 systems pose a promising solution, which provides the opportunity to encrypt the message while simultaniously  meeting the 3 ms timing requirement.
 
 \smallskip 
-Building on the theoretical proposition of Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016}, we formulate the evaluation of MACsec carried out 
-for use in substations and other power systems based on the IEC 61850 standard. Along with this, we consider the findings of Hussain \textit{et al.} 
+Building on the theoretical proposition of Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016}, we formulate our evaluation of MACsec carried 
+out for use in substations and other power systems based on the IEC 61850 standard. Along with this, we consider the findings of Hussain \textit{et al.} 
 \cite{GOOSE_confidentiality_integrity:2020} in relation to the usage of Encrypt-then-MAC AEAD ciphers in the implementation of our MACsec test environment. 
-Hence, our experimental setup enables us to discuss the advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 standard. 
+From this, our experimental setup enables us to discuss the advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 
+standard. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 \label{chapter:implementation}
+\noindent To test the mode of communication in a SAS, we implement a test setup consisting of three Bay Level components. As the IEDs take part in all 
+forms of message exchange inside the Substation Architecture, they are perfectly suitable for testing the communication in conjunction with MACsec. In 
+order to ensure the reproducibility of the study, we decided to use the Raspberry Pi 4 as hardware plattform. With respect to the software used in the 
+applications, we utilize the open source library libiec61850\footnote{source: https://libiec61850.com/} to establish the different communication types 
+and data structures of the IEC 61850 standard. To integrate MACsec into the communication, we utilize the MACsec Linux kernel module\footnote{source: 
+https://github.com/torvalds/linux/blob/master/drivers/net/macsec.c}, which establishes a configurable virtual interface on top of an existing network 
+interface \cite{MACsecLinuxModuleDoc:2016}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/TestSetupIEDs.png}
+    \caption{Structure of the Test Setup}
+    \label{image:MACsecTestSetup}
+\end{figure}
+
+\noindent As displayed in Figure \ref{image:MACsecTestSetup}, we configure IED1 as a publishing server and IED2 and IED3 as communication clients. 
+Furthermore the implementation of IED1 contains a XML data structure compliant to the specification of the Substation Configuration Language (SCL) 
+in IEC 61850-6 \cite{IEC61850-6:2010}. This file contains the communication and processing information of the IED \cite{IEC61850_Overview:2006}. In our 
+case, we integrated a measurement unit (MMXU) \cite[p. 268]{IEC61850-7-4:2010} and a control unit (LLN0) \cite[p. 164]{IEC61850-7-4:2010} into the SCL 
+file. During runtime, IED1 populates the data points of the measuring unit with sampled values of a sinusoidal function. In addition to the actual 
+measurement, each sampled value contains a time stamp and a quality index \cite[p. 61ff]{IEC61850-7-3:2010}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Evaluation          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
