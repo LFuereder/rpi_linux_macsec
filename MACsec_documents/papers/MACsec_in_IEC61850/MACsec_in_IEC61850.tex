@@ -234,7 +234,12 @@ order to ensure the reproducibility of the study, we decided to use the Raspberr
 applications, we utilize the open source library libiec61850\footnote{source: https://libiec61850.com/} to establish the different communication types 
 and data structures of the IEC 61850 standard. To integrate MACsec into the communication, we utilize the MACsec Linux kernel module\footnote{source: 
 https://github.com/torvalds/linux/blob/master/drivers/net/macsec.c}, which establishes a configurable virtual interface on top of an existing network 
-interface \cite{MACsecLinuxModuleDoc:2016}.
+interface \cite{MACsecLinuxModuleDoc:2016}. The remainder of this chapter initially explains the overall structure of the test setup and following this, 
+further elaborates on the subsequent test executions. 
+
+\subsection{Structure of the Test Setup}
+
+\subsection{MACsec Implementation in the Test Setup}
 
 \begin{figure}[h]
     \centering
@@ -245,10 +250,10 @@ interface \cite{MACsecLinuxModuleDoc:2016}.
 
 \noindent As displayed in Figure \ref{image:MACsecTestSetup}, we configure IED1 as a publishing server and IED2 and IED3 as communication clients. 
 Furthermore the implementation of IED1 contains a XML data structure compliant to the specification of the Substation Configuration Language (SCL) 
-in IEC 61850-6 \cite{IEC61850-6:2010}. This file contains the communication and processing information of the IED \cite{IEC61850_Overview:2006}. In our 
-case, we integrated a measurement unit (MMXU) \cite[p. 268]{IEC61850-7-4:2010} and a control unit (LLN0) \cite[p. 164]{IEC61850-7-4:2010} into the SCL 
-file. During runtime, IED1 populates the data points of the measuring unit with sampled values of a sinusoidal function. In addition to the actual 
-measurement, each sampled value contains a time stamp and a quality index \cite[p. 61ff]{IEC61850-7-3:2010}.
+in IEC 61850-6 \cite{IEC61850-6:2010}. This file contains the communication and processing information of the IED itself \cite{IEC61850_Overview:2006}. 
+In our case, we integrated a measurement unit (MMXU) \cite[p. 268]{IEC61850-7-4:2010} and a control unit (LLN0) \cite[p. 164]{IEC61850-7-4:2010} into 
+the SCL file. During runtime, IED1 continuously populates the data points of the measuring unit with sampled values of a sinusoidal function. In addition 
+to the actual measurement, each sampled value contains a time stamp and a quality index \cite[p. 61ff]{IEC61850-7-3:2010}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Evaluation          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
