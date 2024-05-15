@@ -188,9 +188,9 @@ the network \cite[p. 145]{IEEE-802-1AE:2018}.
 
 \smallskip
 To ensure confidentiality and integrity of the transmitted frames, MACsec utilizes Authenticated Encryption with Associated Data (AEAD) cipher suites. 
-These encryption system typically consist of a symmetric block cipher, wich provides the option to encrypt the payload of the message and generates a 
-Message Authentication Code (MAC) over the entire message \cite{GOOSE_confidentiality_integrity:2020}. For usage the IEEE 802.1AE standard specifies 
-four variations of the Advances Encryption System in Galois/Counter Mode (AES-GCM) \cite[p. 143ff]{IEEE-802-1AE:2018}.
+These encryption system typically consist of a symmetric block cipher, wich provides the option to encrypt the payload of the message and simultaniously 
+generates a Message Authentication Code (MAC) over the entire message \cite{GOOSE_confidentiality_integrity:2020}. For usage the IEEE 802.1AE standard 
+specifies four variations of the Advances Encryption System in Galois/Counter Mode (AES-GCM) \cite[p. 143ff]{IEEE-802-1AE:2018}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
@@ -278,10 +278,15 @@ then be requested by IED2 and IED3 via MMS messages.
     \label{image:MACsecTestSetup}
 \end{figure}
 
-\noindent In addition to the TCP request-response communication via MMS messages, IED1 periodically publishes GOOSE messages in a configurable interval 
-containing the current value of the measurement. The configuration of the GOOSE messages, which contain the corresponding broadcast MAC address, VLAN 
-Id and VLAN priority are equally stored in the control unit of the SCL file \cite[p. 189]{IEC61850-8-1:2011}. On the client side, the subscription to 
-the corresponding events is implemented in software, subsequently resulting in a logging function, which provides the latest information. 
+\noindent In addition to the TCP request-response communication via MMS messages, IED1 periodically publishes GOOSE and SV messages in a configurable 
+interval containing the current value of the measurement. The configuration of the GOOSE messages, which contains the corresponding broadcast MAC address, 
+VLAN Id and VLAN Priority are equally stored in the control unit of the SCL file \cite[p. 189]{IEC61850-8-1:2011}. For the transmission of the SV 
+packets, an Application Protocol Data Unit (APDU) is configured during the initialization phase of the server. This object contains the floating point 
+number value of the measurement and a message time stamp. As the application progresses, the content of the APDU is periodically updated and published. 
+
+\smallskip 
+On the client side, the subscription to the corresponding events (in this case GOOSE and SV) is implemented in software in the form of asynchronous 
+handler functions, which subsequently log the incoming information. 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{MACsec integration in the Test Environment}
@@ -294,23 +299,25 @@ various SCs and SAs can be established as shown in Figure \ref{image:MACsecTestS
 For bidirectional MMS communication between two IEDs, one SC is required for each communication direction. Using the example of packet exchange between 
 IED1 and IED2, we have configured the secure channels SC1 and SC2 for this purpose. Each of these channels derives its own SAK from the CAK and 
 establishes a secure connection for the duration of the SA. The establishment of SC3 and SC4 is carried out identically for MMS communication between 
-IED1 and IED3.
+IED1 and IED3. Consequently, if IED2 and IED3 are also ment to send secure multicast messages, two additional SCs must be configured.
 
 \smallskip
-With regard to the secure publication of GOOSE we established an additional SC (displayed in Figure \ref{image:MACsecTestSetup} as SC2), which is 
-connected to both IED2 and IED3. This configuration enables us to broadcast the message while simultaniously securing the payload and ensuring 
-authenticity and integrity of the package.  
+With regard to the secure publication of GOOSE and SV packets, we established an additional SC (displayed in Figure \ref{image:MACsecTestSetup} as SC2), 
+which is connected to both IED2 and IED3. This configuration enables us to broadcast the messages while simultaniously securing the payload and ensuring 
+authenticity and integrity. Since this configuration only allows the publication of GOOSE and SV packets originating from IED1, we only need one SC 
+to secure them in MACsec.   
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{Definition of the Test Procedures}
 \label{subchapter:TestProcedures}
 \noindent To evaluate whether this MACsec implementation fulfills the requirements of the IEC 62351 standard, we conduct a measurement of the 
 transmission times for each of the different package types. In order to achieve a precise time measurement, we expanded the implementation of the server 
-and the client application to toggle a General Purpose Input/Output (GPIO) pin during transmission and reception of the associated frame. 
+and the client application to toggle a General Purpose Input/Output (GPIO) pin during transmission and reception of the associated frame type. 
 
 \smallskip
 By using an external logic analyzer, the times between the voltage level shifts can be measured in the next step. Since the measurement is performed by 
-an external device, we do not need clock synchronization between the communication participants.
+an external device, we do not need clock synchronization between the communication participants, which significantly reduces the implementation efforts  
+of the measurement.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Evaluation          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Evaluation}
