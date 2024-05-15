@@ -1,10 +1,9 @@
-% -------------- Single Column Template --------------------------- %
-%\documentclass[journal,onecolumn]{IEEEtran}
-%\hyphenation{op-tical net-works semi-conduc-tor}
+% ------------------- PESW Template ------------------------------- %
+\documentclass[conference, onecolumn, a4paper]{IEEEtran}
 
 % -------------- Double Column Template --------------------------- %
-\documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
+%\documentclass[conference]{IEEEtran}
+%\IEEEoverridecommandlockouts
 
 
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
@@ -18,6 +17,7 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
+
 \begin{document}
 
 \title{Assessment of a MACsec-based security system for use in critical Infrastructure Communication}
@@ -27,6 +27,8 @@
         \textit{Laboratory for Safe and Secure Systems (LaS³)}\\
         Regensburg, Germany \\
         lukas.fuereder@oth-regensburg.de}
+    \vspace{6 pt}
+    \IEEEauthorblockN{Supervisor: \textit{Prof. Dr. J{\"u}rgen Mottok}}
 }
 
 \maketitle
@@ -39,9 +41,14 @@
     diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor 
     sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
     sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor 
-    sit amet.
+    sit amet.   
+
+    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et 
+    accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{6 pt}
 
 \begin{IEEEkeywords}
     MACsec, IEC61850, IEC62351, GOOSE, Secure Communication
@@ -68,7 +75,7 @@ a brief introduction into the MACsec security standard is provided, which presen
 \ref{chapter:relatedWork} displays relevant information presented by related work assessing the current state of technology in this topic. Chapter 
 \ref{chapter:implementation} explains the test setup used to measure the efficiency of the MACsec-based security system. Lastly the data gathered from 
 this is then evaluated in chapter \ref{chapter:evaluation}. 
-
+\pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Fundamentals         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Background}
 \label{chapter:fundamentals}
@@ -101,9 +108,9 @@ The Bay Level above contains the Intelligent Electronic Devices (IEDs), each of 
 is then communicated through Manufacturing Message Specification (MMS) packets to other IEDs and the Station Level components \cite[p. 44]{IEC61850-8-1:2011}. 
 Simultaniously the IEDs receive control signals from the Station Level, which are also transmitted via MMS packets \cite{trafficGen_IEC61850:2011}. 
 As the Station Level components are not necessarily located in the same LAN as the IEDs, the MMS messaging is implmented through TCP packets on the 
-fourth layer (=Transport Layer) of the OSI model \cite[p. 45]{IEC61850-8-1:2011}. In addition to the MMS messaging, the IEDs use Generic Object Oriented 
-Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Simmilar to SV, GOOSE messages are implemented through broadcast 
-Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
+fourth layer (=Transport Layer) of the OSI model \cite[p. 45]{IEC61850-8-1:2011}. In addition to the MMS messaging, the IEDs use Generic Object 
+Oriented Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Simmilar to SV, GOOSE messages are implemented through 
+broadcast Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
 
 \smallskip
 The devices located in the Station Level of the architecture are responsible for controlling the SAS. This is achieved through MMS packets adressed 
@@ -124,8 +131,8 @@ we need to assess the proposed security functions according to the demands of th
 With regard to MMS messaging, the standard divides the security requirements according to the layers of the OSI reference model. The upper three layers 
 are summarized in the application profile and the lower four layers in the transport profile \cite{SecureMMS:2020}. Based on this, the standard specifies 
 that the security system shall verify the authenticity of the communication partner and the integrity of the transmitted messages during the handshake 
-phase of the transport profile \cite{Review_IEC62351:2019}. Following this the system shall provide confidentiality for the outgoing messages in the data 
-transfer phase \cite{SecureMMS:2020}. With respect to the upper three layers, the standard specifies two possible implementations in the application 
+phase of the transport profile \cite{Review_IEC62351:2019}. Following this the system shall provide confidentiality for the outgoing messages in the 
+data transfer phase \cite{SecureMMS:2020}. With respect to the upper three layers, the standard specifies two possible implementations in the application 
 profile: peer-to-peer security and End-to-End security \cite{Review_IEC62351:2019}. The primary difference between them consists in the data origin 
 authentication and message integrity checks, which are only verified during the association establishment in the peer-to-peer implementation, whereas 
 the End-to-End implementation also ensures them in the following data transfer \cite{Review_IEC62351:2019}.
@@ -228,33 +235,73 @@ standard.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 \label{chapter:implementation}
-\noindent To test the mode of communication in a SAS, we implement a test setup consisting of three Bay Level components. As the IEDs take part in all 
-forms of message exchange inside the Substation Architecture, they are perfectly suitable for testing the communication in conjunction with MACsec. In 
-order to ensure the reproducibility of the study, we decided to use the Raspberry Pi 4 as hardware plattform. With respect to the software used in the 
-applications, we utilize the open source library libiec61850\footnote{source: https://libiec61850.com/} to establish the different communication types 
-and data structures of the IEC 61850 standard. To integrate MACsec into the communication, we utilize the MACsec Linux kernel module\footnote{source: 
-https://github.com/torvalds/linux/blob/master/drivers/net/macsec.c}, which establishes a configurable virtual interface on top of an existing network 
-interface \cite{MACsecLinuxModuleDoc:2016}. The remainder of this chapter initially explains the overall structure of the test setup and following this, 
-further elaborates on the subsequent test executions. 
+\noindent To test the mode of communication in a SAS, we implement a test environment consisting of three Bay Level components. As the IEDs take part 
+in all forms of message exchange inside the Substation Architecture, they are perfectly suitable for testing the communication in conjunction with MACsec. 
 
-\subsection{Structure of the Test Setup}
+\smallskip
+In order to ensure the reproducibility of this study, we decided to use the Raspberry Pi 4 as hardware plattform for all devices in the setup. With respect 
+to the software used in the applications, we utilize the open source library libiec61850\footnote{source: https://libiec61850.com/} to establish the 
+different communication types and data structures of the IEC 61850 standard. To integrate MACsec into the communication, we utilize the MACsec Linux kernel 
+module\footnote{source: https://github.com/torvalds/linux/blob/master/drivers/net/macsec.c}, which establishes a configurable virtual interface on top of 
+an existing network interface \cite{MACsecLinuxModuleDoc:2016}. For the implementation of time measurement in chapter \ref{subchapter:TestProcedures},  
 
-\subsection{MACsec Implementation in the Test Setup}
+\smallskip 
+The remainder of this chapter is structured as follows: Chapter \ref{subchapter:TestEnvironmentStructure} initially explains the overall structure of the 
+test environment. Building on this, Chapter \ref{subchapter:TestEnvironmentMACsec} describes the overall MACsec configuration and the corresponding entities 
+of the security standard. Lastly Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions. 
+
+\subsection{Structure of the Test Environment}
+\label{subchapter:TestEnvironmentStructure}
+\noindent As displayed in Figure \ref{image:MACsecTestSetup}, we configure IED1 as a publishing server and IED2 and IED3 as communication clients. 
+Furthermore the implementation of IED1 contains a XML data structure compliant to the specification of the Substation Configuration Language (SCL) 
+in IEC 61850-6 \cite{IEC61850-6:2010}. This file contains the communication and processing information of the IED itself \cite{IEC61850_Overview:2006}.
+
+\smallskip
+In our case, we integrated a measurement unit (MMXU) \cite[p. 268]{IEC61850-7-4:2010} and a control unit (LLN0) \cite[p. 164]{IEC61850-7-4:2010} 
+into the SCL file. During runtime, IED1 continuously populates the data points of the measuring unit with sampled values of a sinusoidal function. In 
+addition to the actual measurement, each sampled value contains a time stamp and a quality index \cite[p. 61ff]{IEC61850-7-3:2010}. These values can 
+then be requested by IED2 and IED3 via MMS messages.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.45\textwidth]{images/TestSetupIEDs.png}
-    \caption{Structure of the Test Setup}
+    \caption{Component Structure of the Test Setup}
     \label{image:MACsecTestSetup}
 \end{figure}
 
-\noindent As displayed in Figure \ref{image:MACsecTestSetup}, we configure IED1 as a publishing server and IED2 and IED3 as communication clients. 
-Furthermore the implementation of IED1 contains a XML data structure compliant to the specification of the Substation Configuration Language (SCL) 
-in IEC 61850-6 \cite{IEC61850-6:2010}. This file contains the communication and processing information of the IED itself \cite{IEC61850_Overview:2006}. 
-In our case, we integrated a measurement unit (MMXU) \cite[p. 268]{IEC61850-7-4:2010} and a control unit (LLN0) \cite[p. 164]{IEC61850-7-4:2010} into 
-the SCL file. During runtime, IED1 continuously populates the data points of the measuring unit with sampled values of a sinusoidal function. In addition 
-to the actual measurement, each sampled value contains a time stamp and a quality index \cite[p. 61ff]{IEC61850-7-3:2010}.
+\noindent In addition to the TCP request-response communication via MMS messages, IED1 periodically publishes GOOSE messages in a configurable interval 
+containing the current value of the measurement. The configuration of the GOOSE messages, which contain the corresponding broadcast MAC address, VLAN 
+Id and VLAN priority are equally stored in the control unit of the SCL file \cite[p. 189]{IEC61850-8-1:2011}. On the client side, the subscription to 
+the corresponding events is implemented in software, subsequently resulting in a logging function, which provides the latest information. 
 
+%----------------------------------------------------------------------------------------------------------------------------------------------------%
+\subsection{MACsec integration in the Test Environment}
+\label{subchapter:TestEnvironmentMACsec}
+\noindent Building on the general structure described in chapter \ref{subchapter:TestEnvironmentStructure}, the implementation of MACsec into the test 
+setup can now be explained. In doing so, we primarily integrated all devices in the same CA by distributing a pre-shared CAK. Based on this key, the 
+various SCs and SAs can be established as shown in Figure \ref{image:MACsecTestSetup}.
+
+\smallskip
+For bidirectional MMS communication between two IEDs, one SC is required for each communication direction. Using the example of packet exchange between 
+IED1 and IED2, we have configured the secure channels SC1 and SC2 for this purpose. Each of these channels derives its own SAK from the CAK and 
+establishes a secure connection for the duration of the SA. The establishment of SC3 and SC4 is carried out identically for MMS communication between 
+IED1 and IED3.
+
+\smallskip
+With regard to the secure publication of GOOSE we established an additional SC (displayed in Figure \ref{image:MACsecTestSetup} as SC2), which is 
+connected to both IED2 and IED3. This configuration enables us to broadcast the message while simultaniously securing the payload and ensuring 
+authenticity and integrity of the package.  
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------%
+\subsection{Definition of the Test Procedures}
+\label{subchapter:TestProcedures}
+\noindent To evaluate whether this MACsec implementation fulfills the requirements of the IEC 62351 standard, we conduct a measurement of the 
+transmission times for each of the different package types. In order to achieve a precise time measurement, we expanded the implementation of the server 
+and the client application to toggle a General Purpose Input/Output (GPIO) pin during transmission and reception of the associated frame. 
+
+\smallskip
+By using an external logic analyzer, the times between the voltage level shifts can be measured in the next step. Since the measurement is performed by 
+an external device, we do not need clock synchronization between the communication participants.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Evaluation          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Evaluation}
