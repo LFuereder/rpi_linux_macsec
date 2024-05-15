@@ -62,19 +62,28 @@ distribution systems, can constitute a vulnerability which may be exploited to d
 laws such as the Network and Information Security Act (NIS-2) \cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} of the 
 German Federal Office for Information Security (BSI) demand a unified level of cybersecurity for these entities. In these regulations, the councils 
 prescribe that the companies will be required to implement security features to detect and prevent intrusions, as well as remove faults caused through 
-intrusion attempts during system runtime. \cite[§11 (1d)]{IT-Gesetz_2:2021} Additionally the extension of this paragraph dictates, that these companies 
-are obliged to provide proof of compliance with the safety requirements in a two year period. \cite[§11 (1e)]{IT-Gesetz_2:2021} This decision is intended 
+intrusion attempts during system runtime \cite[§11 (1d)]{IT-Gesetz_2:2021}. Additionally the extension of this paragraph dictates, that these companies 
+are obliged to provide proof of compliance with the safety requirements in a two year period \cite[§11 (1e)]{IT-Gesetz_2:2021}. This decision is intended 
 to ensure the future working of the security systems with respect to adapting changes of the latest technologies. 
 
 \smallskip
-This paper evaluates the currently established implementation of protection systems securing communication in Substation Automation Systems (SASs) and 
-thereby provides a brief overview of the communication standard used in these facilities. Following this we propose a Media Access Control Security 
-(MACsec) based security system with the security goals set for these applications. The further course of the paper is structured as follows: 
-Chapter \ref{chapter:fundamentals} provides a general overview of the IEC 61850 communication standard and the associated  message types. Following this 
-a brief introduction into the MACsec security standard is provided, which presents the relevant features used in the implementation later on. Chapter 
-\ref{chapter:relatedWork} displays relevant information presented by related work assessing the current state of technology in this topic. Chapter 
+In addition to measures for detecting and handling attacks, these laws mandate the compliance with security standards to ensure the protection of 
+confidential information \cite[§2 (2a)]{IT-Gesetz_2:2021}. The main objectives of these security standards is the ensurance of security goals as for instance 
+authenticity, integrity and confidentiality of the internal mode of operation \cite[§2 (13)]{IT-Gesetz_2:2021}. Organizations such as the International 
+Electrotechnical Commission (IEC) or the Institute of Electrical and Electronics Engineers (IEEE) develop standards that specify the implementation of these 
+abstract security goals. This paper evaluates the currently established implementation of protection systems securing communication in Substation Automation 
+Systems (SASs) and thereby provides a brief overview of the communication standard used in these facilities. Following this we propose a Media Access Control 
+Security (MACsec) based security system and evaluate, wether this implementation fulfills the requirements of the security goals specified in the IEC 62351 
+security standards. 
+
+\smallskip
+The further course of the paper is structured as follows: Chapter \ref{chapter:fundamentals} clarifies the technical background of this paper and thereby 
+provides a general overview of the IEC 61850 communication standard and the associated  message types. Building on this, the further part of this chapter 
+presents the current state of message security mandated by the IEC 62351 security standard. Following this a brief introduction into the MACsec security 
+standard is provided, which presents the relevant features used in the implementation later on. Chapter \ref{chapter:relatedWork} displays relevant 
+information presented by related work assessing the current state of technology in this topic. In the further course of the paper Chapter 
 \ref{chapter:implementation} explains the test setup used to measure the efficiency of the MACsec-based security system. Lastly the data gathered from 
-this is then evaluated in chapter \ref{chapter:evaluation}. 
+this is then evaluated in chapter \ref{chapter:evaluation} and is placed in the context of the mandated safety requirements. 
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Fundamentals         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Background}
