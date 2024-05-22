@@ -349,11 +349,12 @@ without additional computational load for both configurations under ideal condit
     \end{subfigure}
 \end{figure}
 
-\noindent As can be seen here, both Ethernet-based packets are transmitted in well below the IEC 62351 standard specification of 3 ms regardless of the 
-configuration. Furthermore securing the packets results solely in an extension of the transmission time of approximatly 100 $\mu$s for both message types. 
-Lastly, it can be seen that activating the encryption in the AEAD cipher leads to a minimal increase in transmission time. This is likely due to the 
-necessary rearrangement of the data payload into the Ethernet frame, which is not needed, if only integrity checks are performed. Overall, the change in 
-transmission times between these two configurations is nevertheless minimal at around 6 $\mu$s. 
+\noindent As can be seen here, both Ethernet-based packets are transmitted in well below the IEC 61850 standard specification of 3 ms 
+\cite{fixedLatencyGOOSESV:2021} regardless of the configuration. Furthermore securing the packets results solely in an extension of the transmission 
+time of approximatly 100 $\mu$s for both message types. Lastly, it can be seen that activating the encryption in the AEAD cipher leads to a minimal 
+increase in transmission time. This is likely due to the necessary rearrangement of the data payload into the Ethernet frame, which is not needed, 
+if only integrity checks are performed. Overall, the change in transmission times between these two configurations is nevertheless minimal at around 
+6 $\mu$s. 
 
 \subsection{Temporal Influence of MACsec on MMS messages}
 \label{subchapter:EvalMMS}
@@ -370,7 +371,13 @@ displayed in Figure \ref{image:MMSTimings}.
     \label{image:MMSTimings}
 \end{figure}
 
-\noindent 
+\noindent As displayed in Figure \ref{image:MMSTimings}, the time measurements for MMS messages vary only marginally regardless of which configuration 
+is considered. It can be seen that the transmission times differ by a factor of 10 compared to the Ethernet-based packets from chapter \ref{subchapter:EvalGOOSESV}.
+This is due to the overhead caused by the aditional processing in the higher layers of the OSI stack. Overall, however, the trend in the variance between 
+the different transmission times is consistent with the other measurements. Analog to GOOSE and SV, the IEC 61850 standard specifies a timing requirement 
+for MMS packets at 100 ms \cite{fixedLatencyGOOSESV:2021}. As demonstrated in this measurement, the transmission time of MMS messaging with an active MACsec 
+security module is well below the required time period. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Conclusion          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
@@ -379,6 +386,5 @@ displayed in Figure \ref{image:MMSTimings}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     Begin of References      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \printbibliography
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
