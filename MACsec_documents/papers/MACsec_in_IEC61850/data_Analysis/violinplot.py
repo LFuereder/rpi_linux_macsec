@@ -5,9 +5,11 @@ import matplotlib.pyplot as plt
 # Source
 #FILE_PATH = 'raw_data/GOOSE_no_encryption.csv'
 #FILE_PATH = 'raw_data/GOOSE_AES_encrypted.csv'
+#FILE_PATH = 'raw_data/GOOSE_AES_integrity.csv'
 
-FILE_PATH = 'raw_data/SV_no_encryption.csv'
+#FILE_PATH = 'raw_data/SV_no_encryption.csv'
 #FILE_PATH = 'raw_data/SV_AES_encrypted.csv'
+FILE_PATH = 'raw_data/SV_AES_integrity.csv'
 
 # Function to calculate time periods where Channel 1 and Channel 2 do not have the same value
 def calculate_timediv_periods():
@@ -22,7 +24,7 @@ def calculate_timediv_periods():
     timediv_start = None
 
     for i in range(len(times)):
-        if ch1_values[i] != ch2_values[i]:
+        if ch1_values[i] == ch2_values[i]:
             if timediv_start is None:
                 timediv_start = times[i]
         else:

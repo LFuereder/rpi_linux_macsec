@@ -5,26 +5,29 @@ import numpy as np
 # Parameters for file paths
 GOOSE_PATHS = [
     ('duration_data/durations_GOOSE_no_encryption.csv', 'GOOSE (no encryption)'),
-    ('duration_data/durations_GOOSE_AES.csv', 'MACsec secured GOOSE')
+    ('duration_data/durations_GOOSE_AES_encryption.csv', 'GOOSE (MACsec encrypted)'),
+    ('duration_data/durations_GOOSE_AES_integrity.csv', 'GOOSE (MACsec integrity)')
 ]
 
 SV_PATHS = [
     ('duration_data/durations_SV_no_encryption.csv', 'SV (no encryption)'),
-    ('duration_data/durations_SV_AES.csv', 'MACsec secured SV')
+    ('duration_data/durations_SV_AES_encryption.csv', 'SV (MACsec encrypted)'),
+    ('duration_data/durations_SV_AES_integrity.csv', 'SV (MACsec integrity)')
 ]
 
 MMS_PATHS = [
     ('duration_data/durations_MMS_no_encryption.csv', 'MMS (no encryption)'),
-    ('duration_data/durations_MMS_AES.csv', 'MACsec secured MMS')
+    ('duration_data/durations_MMS_AES_encryption.csv', 'MMS (MACsec encrypted)'),
+    ('duration_data/durations_MMS_AES_integrity.csv', 'MMS (MACsec integrity)')
 ]
 
 ALL_PATHS = [
     ('duration_data/durations_GOOSE_no_encryption.csv', 'GOOSE (no encryption)'),
-    ('duration_data/durations_GOOSE_AES.csv', 'MACsec secured GOOSE'),
+    ('duration_data/durations_GOOSE_AES_encryption.csv', 'MACsec secured GOOSE'),
     ('duration_data/durations_SV_no_encryption.csv', 'SV (no encryption)'),
-    ('duration_data/durations_SV_AES.csv', 'MACsec secured SV'),
+    ('duration_data/durations_SV_AES_encryption.csv', 'MACsec secured SV'),
     ('duration_data/durations_MMS_no_encryption.csv', 'MMS (no encryption)'),
-    ('duration_data/durations_MMS_AES.csv', 'MACsec secured MMS')
+    ('duration_data/durations_MMS_AES_encryption.csv', 'MACsec secured MMS')
 ]
 
 FILE_PATHS = MMS_PATHS
@@ -49,9 +52,9 @@ plt.figure(figsize=(10, 8))
 violin_parts = plt.violinplot(duration_data_all, showmedians=True, widths=0.4)
 
 # Set labels and title
-plt.ylabel('Duration [$\mu$s]', labelpad=20, fontsize=14)
+plt.ylabel('Transmission Time [$\mu$s]', labelpad=20, fontsize=14)
 plt.xlabel('Measurement configuration', fontsize=14)
-plt.title('GOOSE Single Event Measurement', fontsize=16)
+#plt.title('MMS Single Event Measurement', fontsize=16)
 
 # Set names for each boxplot on the x-axis
 plt.xticks(range(1, len(FILE_PATHS) + 1), boxplot_labels)

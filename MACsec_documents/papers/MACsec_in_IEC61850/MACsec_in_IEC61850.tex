@@ -11,6 +11,7 @@
 \usepackage{algorithmic}
 \usepackage[backend=biber]{biblatex}
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \addbibresource{bibliography.bib}
@@ -100,7 +101,7 @@ data structure defined in this standard, which makes the integration of various 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.45\textwidth]{images/IEC61850_Architecture.png}
+    \includegraphics[width=0.65\textwidth]{images/IEC61850_Architecture.png}
     \caption{Overview of the three architecture levels in IEC 61850 \cite{SGRWin_IEC61850Architecture:2021}}
     \label{image:IEC61850Architecture}
 \end{figure}
@@ -164,7 +165,7 @@ confidentiality of the transmitted packets.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.45\textwidth]{images/MACsec_Entities_Diagram.png}
+    \includegraphics[width=0.65\textwidth]{images/MACsec_Entities_Diagram.png}
     \caption{Schematic representation of the MACsec entities \cite{IEEE-802-1AE:2018}}
     \label{image:MACsecEntities}
 \end{figure}
@@ -253,11 +254,13 @@ to the software used in the applications, we utilize the open source library lib
 different communication types and data structures of the IEC 61850 standard. To integrate MACsec into the communication, we utilize the MACsec Linux kernel 
 module\footnote{source: https://github.com/torvalds/linux/blob/master/drivers/net/macsec.c}, which establishes a configurable virtual interface on top of 
 an existing network interface \cite{MACsecLinuxModuleDoc:2016}. For the implementation of time measurement in chapter \ref{subchapter:TestProcedures},  
+we integrate the WiringPi\footnote{source: https://github.com/WiringPi/WiringPi} library into the project. This enables us to access peripherals of the 
+hardware plattform and results in precise time measurement across several communication participants. 
 
 \smallskip 
 The remainder of this chapter is structured as follows: Chapter \ref{subchapter:TestEnvironmentStructure} initially explains the overall structure of the 
-test environment. Building on this, Chapter \ref{subchapter:TestEnvironmentMACsec} describes the overall MACsec configuration and the corresponding entities 
-of the security standard. Lastly Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions. 
+test environment. Building on this, Chapter \ref{subchapter:TestEnvironmentMACsec} describes the additive MACsec configuration and the corresponding entities 
+of the security standard. Lastly Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions and transmission time measurement. 
 
 \subsection{Structure of the Test Environment}
 \label{subchapter:TestEnvironmentStructure}
@@ -273,7 +276,7 @@ then be requested by IED2 and IED3 via MMS messages.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.45\textwidth]{images/TestSetupIEDs.png}
+    \includegraphics[width=0.55\textwidth]{images/TestSetupIEDs.png}
     \caption{Component Structure of the Test Setup}
     \label{image:MACsecTestSetup}
 \end{figure}
@@ -293,19 +296,16 @@ handler functions, which subsequently log the incoming information.
 \label{subchapter:TestEnvironmentMACsec}
 \noindent Building on the general structure described in chapter \ref{subchapter:TestEnvironmentStructure}, the implementation of MACsec into the test 
 setup can now be explained. In doing so, we primarily integrated all devices in the same CA by distributing a pre-shared CAK. Based on this key, the 
-various SCs and SAs can be established as shown in Figure \ref{image:MACsecTestSetup}.
-
-\smallskip
-For bidirectional MMS communication between two IEDs, one SC is required for each communication direction. Using the example of packet exchange between 
-IED1 and IED2, we have configured the secure channels SC1 and SC2 for this purpose. Each of these channels derives its own SAK from the CAK and 
-establishes a secure connection for the duration of the SA. The establishment of SC3 and SC4 is carried out identically for MMS communication between 
-IED1 and IED3. Consequently, if IED2 and IED3 are also ment to send secure multicast messages, two additional SCs must be configured.
+various SCs and SAs can be established as shown in Figure \ref{image:MACsecTestSetup}. For bidirectional MMS communication between two IEDs, one SC is 
+required for each communication direction. Using the example of packet exchange between IED1 and IED2, we have configured the secure channels SC1 and 
+SC2 for this purpose. Each of these channels derives its own SAK from the CAK and establishes a secure connection for the duration of the SA. The 
+establishment of SC3 and SC4 is carried out identically for MMS communication between IED1 and IED3.
 
 \smallskip
 With regard to the secure publication of GOOSE and SV packets, we established an additional SC (displayed in Figure \ref{image:MACsecTestSetup} as SC2), 
 which is connected to both IED2 and IED3. This configuration enables us to broadcast the messages while simultaniously securing the payload and ensuring 
 authenticity and integrity. Since this configuration only allows the publication of GOOSE and SV packets originating from IED1, we only need one SC 
-to secure them in MACsec.   
+to secure them in MACsec. Consequently, if IED2 and IED3 are also ment to send secure multicast messages, two additional SCs must be configured.   
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{Definition of the Test Procedures}
@@ -313,16 +313,64 @@ to secure them in MACsec.
 \noindent To evaluate whether this MACsec implementation fulfills the requirements of the IEC 62351 standard, we conduct a measurement of the 
 transmission times for each of the different package types. In order to achieve a precise time measurement, we expanded the implementation of the server 
 and the client application to toggle a General Purpose Input/Output (GPIO) pin during transmission and reception of the associated frame type. 
-
-\smallskip
-By using an external logic analyzer, the times between the voltage level shifts can be measured in the next step. Since the measurement is performed by 
-an external device, we do not need clock synchronization between the communication participants, which significantly reduces the implementation efforts  
-of the measurement.
+By using an external logic analyzer, the times between the voltage level shifts can be measured in the next step. Since this measurement is performed 
+by an external device, we do not need clock synchronization between the communication participants, which significantly reduces the implementation 
+efforts of the measurement. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Evaluation          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Evaluation}
 \label{chapter:evaluation}
+\noindent Based on the implementational design explained in Chapter \ref{chapter:implementation}, a number of transmission time measurements can be 
+executed. In the following we initially compare the times in three different configurations in order to be able to investigate the temporal influence 
+of the security module. The first step here is to measure without frame protection, followed by MACsec with integrity check and encryption and lastly 
+solety MACsec integrity check. These measurements are carried out in the following chapters for all IEC 61850 message types.
 
+\subsection{Temporal Influence of MACsec on SV and GOOSE messages}
+\label{subchapter:EvalGOOSESV}
+\noindent For the GOOSE and SV measurement, IED1 was configured in the test setup so that the corresponding packets are published periodically at intervals 
+of 500 ms. In the next step, the temporal delay to the handler function of the client side was measured. This measurement was then repeated 1000 times 
+without additional computational load for both configurations under ideal conditions. The results of these measurements are displayed in Figures 
+\ref{imgae:GOOSETimings} and \ref{image:SVTimings}.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/GOOSE_group_all_configs.png}
+        \caption{Time comparison of single GOOSE transmission}
+        \label{imgae:GOOSETimings}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/SV_group_all_configs.png}
+        \caption{Time comparison of a single SV transmission}
+        \label{image:SVTimings}
+    \end{subfigure}
+\end{figure}
+
+\noindent As can be seen here, both Ethernet-based packets are transmitted in well below the IEC 62351 standard specification of 3 ms regardless of the 
+configuration. Furthermore securing the packets results solely in an extension of the transmission time of approximatly 100 $\mu$s for both message types. 
+Lastly, it can be seen that activating the encryption in the AEAD cipher leads to a minimal increase in transmission time. This is likely due to the 
+necessary rearrangement of the data payload into the Ethernet frame, which is not needed, if only integrity checks are performed. Overall, the change in 
+transmission times between these two configurations is nevertheless minimal at around 6 $\mu$s. 
+
+\subsection{Temporal Influence of MACsec on MMS messages}
+\label{subchapter:EvalMMS}
+\noindent For the MMS measurement, IED1 was configured to only performs the periodic update of the data points in the measurement unit of the internal 
+SCL data structure. During this process, the time required for a MMS-request MMS-response sequence is measured on the client side. Since this message 
+exchange involves two MMS messages, the resulting time is divided by two in the next step to determine the average transmission time. Identical to 
+chapter \ref{subchapter:EvalGOOSESV} the measurement is then repeated 1000 times for all three configurations. The results of these measurements are 
+displayed in Figure \ref{image:MMSTimings}. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.55\textwidth]{images/MMS_group_all_configs.png}
+    \caption{Time comparison of a single MMS transmission}
+    \label{image:MMSTimings}
+\end{figure}
+
+\noindent 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Conclusion          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
