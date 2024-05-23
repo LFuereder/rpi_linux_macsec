@@ -4,21 +4,21 @@ import numpy as np
 
 # Parameters for file paths
 GOOSE_PATHS = [
-    ('duration_data/durations_GOOSE_no_encryption.csv', 'GOOSE (no encryption)'),
-    ('duration_data/durations_GOOSE_AES_encryption.csv', 'GOOSE (MACsec encrypted)'),
-    ('duration_data/durations_GOOSE_AES_integrity.csv', 'GOOSE (MACsec integrity)')
+    ('duration_data/durations_GOOSE_no_encryption.csv', 'GOOSE\n(no encryption)'),
+    ('duration_data/durations_GOOSE_AES_encryption.csv', 'GOOSE\n(MACsec encrypted)'),
+    ('duration_data/durations_GOOSE_AES_integrity.csv', 'GOOSE\n(MACsec integrity)')
 ]
 
 SV_PATHS = [
-    ('duration_data/durations_SV_no_encryption.csv', 'SV (no encryption)'),
-    ('duration_data/durations_SV_AES_encryption.csv', 'SV (MACsec encrypted)'),
-    ('duration_data/durations_SV_AES_integrity.csv', 'SV (MACsec integrity)')
+    ('duration_data/durations_SV_no_encryption.csv', 'SV\n(no encryption)'),
+    ('duration_data/durations_SV_AES_encryption.csv', 'SV\n(MACsec encrypted)'),
+    ('duration_data/durations_SV_AES_integrity.csv', 'SV\n(MACsec integrity)')
 ]
 
 MMS_PATHS = [
-    ('duration_data/durations_MMS_no_encryption.csv', 'MMS (no encryption)'),
-    ('duration_data/durations_MMS_AES_encryption.csv', 'MMS (MACsec encrypted)'),
-    ('duration_data/durations_MMS_AES_integrity.csv', 'MMS (MACsec integrity)')
+    ('duration_data/durations_MMS_no_encryption.csv', 'MMS\n(no encryption)'),
+    ('duration_data/durations_MMS_AES_encryption.csv', 'MMS\n(MACsec encrypted)'),
+    ('duration_data/durations_MMS_AES_integrity.csv', 'MMS\n(MACsec integrity)')
 ]
 
 ALL_PATHS = [
@@ -46,22 +46,26 @@ for file_path, label in FILE_PATHS:
     medians.append(median_duration)
 
 # Create a new figure
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(12, 12))
 
 # Create the violin plot
 violin_parts = plt.violinplot(duration_data_all, showmedians=True, widths=0.4)
 
 # Set labels and title
-plt.ylabel('Transmission Time [$\mu$s]', labelpad=20, fontsize=14)
-plt.xlabel('Measurement configuration', fontsize=14)
+plt.ylabel('Transmission Time [$\mu$s]', labelpad=20, fontsize=22)
+#plt.xlabel('Measurement configuration', fontsize=22)
 #plt.title('MMS Single Event Measurement', fontsize=16)
 
 # Set names for each boxplot on the x-axis
-plt.xticks(range(1, len(FILE_PATHS) + 1), boxplot_labels)
+plt.xticks(range(1, len(FILE_PATHS) + 1), boxplot_labels, fontsize=22)
+
+# Increase fontsize of the numbers on both x and y axis
+plt.tick_params(axis='both', which='major', labelsize=16)  # Increase font size of tick labels
+
 
 # Print median values on the plot
 for i, median in enumerate(medians):
-    plt.text(i + 1.2, median, f'{median:.2f} $\mu$s', fontsize=12, color='black')
+    plt.text(i + 1.2, median, f'{median:.2f} $\mu$s', fontsize=14, color='black')
 
 # Remove the top and right spines
 plt.gca().spines['top'].set_visible(False)
