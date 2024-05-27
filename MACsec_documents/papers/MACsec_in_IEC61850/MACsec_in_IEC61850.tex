@@ -38,19 +38,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Abstract           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
     \noindent This paper investigates the integration of Media Access Control Security (MACsec) into the communication of critical infrastructure, 
-    specifically within power grid applications, such as Substation Automation Systems (SAS) using the IEC 61850 standard. Building on the principles of both standards, this study aims 
-    to determine if MACsec can meet the security and performance requirements set by IEC 62351 for power system communications.
+    specifically within power grid applications, such as Substation Automation Systems (SAS) using the IEC 61850 standard. Building on the principles 
+    of both standards, this study aims to determine if MACsec can meet the security and performance requirements set by IEC 62351 for power system 
+    communications.
     
     \smallskip
-    \noindent Furthermore, a  test environment containing a number of Intelligent Electronic Devices (IEDs) supporting communication compliant to all IEC 
-    61850 message types is established to evaluate this integration. The results of the measurements executed in this environment indicate that MACsec could 
-    secure all types of messages, such as Manufacturing Message Specification (MMS), Sampled-Value (SV) and Generic Object Oriented Substation Events 
-    (GOOSE), within the required time periods without significant delays. Even with additional encryption activated in the cipher suite, the resulting transmission times are well below the required times. This suggests that 
-    MACsec can enhance the security goals for industrial communication by providing confidentiality in addition to the already mandated assurance of authenticity and integrity to all messages without compromising performance.
+    \noindent Furthermore, a  test environment containing a number of Intelligent Electronic Devices (IEDs) supporting communication compliant to all 
+    IEC 61850 message types is established to evaluate this integration. The results of the measurements executed in this environment indicate that 
+    MACsec could secure all types of messages, such as Manufacturing Message Specification (MMS), Sampled-Value (SV) and Generic Object Oriented 
+    Substation Events (GOOSE), within the required time periods without significant delays. Even with additional encryption activated in the cipher suite, 
+    the resulting transmission times are well below the required times. This suggests that MACsec can enhance the security goals for industrial 
+    communication by providing confidentiality in addition to the already mandated assurance of authenticity and integrity to all messages without 
+    compromising performance.
 
     \smallskip
-    \noindent Only the requirement for end-to-end security cannot be met by MACsec in this configuration, as the security system re-encrypts with every hop of the transmission. For this reason, we propose a hybrid approach 
-    of Transport Layer Security (TLS) and MACsec as part of future work. 
+    \noindent Only the requirement for end-to-end security cannot be met by MACsec in this configuration, as the security system re-encrypts with every 
+    hop of the transmission. For this reason, we propose a hybrid approach of Transport Layer Security (TLS) and MACsec as part of future work. 
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -63,22 +66,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      Start of the Text      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 \label{chapter:introduction}
-\noindent Companies that are classified as critical infrastructure, for example water supply facilities, power plants and their corresponding 
-distribution systems, can constitute an attractive target, which may be exploited to disrupt the supply of basic resources to entire countries. For this reason, 
-laws such as the Network and Information Security Act (NIS-2) \cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} enforced by the German Federal Office for Information Security (BSI) demand a unified level of cybersecurity for these entities. In these regulations, the councils 
-prescribe that the companies will be required to implement security features to detect and prevent intrusions, as well as remove faults caused through 
-intrusion attempts during system runtime \cite[§11 (1d)]{IT-Gesetz_2:2021}. Additionally, the extension of this paragraph dictates that these companies 
-are obliged to provide proof of compliance with the security requirements in a two-year period \cite[§11 (1e)]{IT-Gesetz_2:2021}. This decision is intended 
-to ensure the future operability of the security systems with respect to adapting changes of the latest technologies. 
+\noindent Companies classified as critical infrastructure, for example water supply facilities, power plants and their corresponding distribution systems, 
+can constitute an attractive target for cyber attacks, which could disrupt the supply of basic resources to entire countries. As a result, laws such as the 
+Network and Information Security Act (NIS-2) \cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} enforced by the German Federal 
+Office for Information Security (BSI) demand a unified level of cybersecurity for these entities. In these regulations, the councils prescribe that the companies 
+must adhere to information security standards, which mandate the current requirements for secure communication and cryptography \cite[p. 9]{BSI-ISMS:2017}. 
+Furthermore, the extension of the IT Act 2.0 dictates that these companies are obliged to provide proof of compliance with the security requirements over a 
+two-year period \cite[§11 (1e)]{IT-Gesetz_2:2021}. This decision is intended to ensure the future operability of the security systems with respect to adapting 
+changes of the latest technologies. 
 
 \smallskip
-In addition to measures for detecting and handling attacks, these laws mandate the compliance with security standards to ensure the protection of system-internal information \cite[§2 (2a)]{IT-Gesetz_2:2021}. The main objectives of these security standards are the assurance of the security goals authenticity, integrity 
-and confidentiality for applications in critical infrastructure \cite[§2 (13)]{IT-Gesetz_2:2021}. Organizations such as the International 
-Electrotechnical Commission (IEC) or the Institute of Electrical and Electronics Engineers (IEEE) develop standards that specify the implementation of these 
-abstract security goals. This paper evaluates the currently established implementation of protection systems securing communication in Substation Automation 
-Systems (SASs) and thereby provides a brief overview of the communication standard used in these facilities. Following this, we propose a Media Access Control 
-Security (MACsec) based security system and evaluate whether this implementation fulfills the requirements of the security goals specified in the IEC 62351 
-security standards. 
+The main objectives of these security standards are the assurance of the security goals authenticity, integrity and confidentiality for applications in 
+critical infrastructure \cite[§2 (13)]{IT-Gesetz_2:2021}. Organizations such as the International Electrotechnical Commission (IEC) or the Institute of 
+Electrical and Electronics Engineers (IEEE) develop standards that specify the implementation of these abstract security goals. This paper evaluates the 
+currently established implementation of protection systems securing communication in Substation Automation Systems (SASs) and thereby provides a brief 
+overview of the communication standards used in these facilities. Following this, we propose a Media Access Control Security (MACsec) based security system 
+and evaluate whether this implementation fulfills the requirements of the security goals specified in the IEC 62351 security standards. 
 
 \smallskip
 The further course of the paper is structured as follows: Chapter \ref{chapter:fundamentals} clarifies the technical background of this paper and thereby 
@@ -123,7 +126,7 @@ Simultaneously, the IEDs receive control signals from the Station Level, which a
 As the Station Level components are not necessarily located in the same LAN as the IEDs, the MMS messaging is implemented through TCP packets on the 
 fourth layer (Transport Layer) of the OSI model \cite[p. 45]{IEC61850-8-1:2011}. In addition to the MMS messaging, the IEDs use Generic Object 
 Oriented Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Similar to SV, GOOSE messages are implemented through 
-broadcast Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
+multicast Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
 
 \smallskip
 The devices located in the Station Level of the architecture are responsible for controlling the SAS. This is achieved through MMS packets addressed 
@@ -141,14 +144,15 @@ security goals and requirements for cybersecurity solutions. In order to evaluat
 we need to assess the proposed security functions according to the demands of this standard.
 
 \smallskip
-With regard to MMS messaging, the standard divides the security requirements according to the layers of the OSI reference model. The upper three layers 
-are summarized in the application profile and the lower four layers in the transport profile \cite{SecureMMS:2020}. Based on this, the standard specifies 
-that the security system shall verify the authenticity of the communication partner and the integrity of the transmitted messages during the handshake 
-phase of the transport profile \cite{Review_IEC62351:2019}. Following this, the system shall provide confidentiality for the outgoing messages in the 
-data transfer phase \cite{SecureMMS:2020}. With respect to the upper three layers, the standard specifies two possible implementations in the application 
-profile: peer-to-peer security and end-to-end security \cite{Review_IEC62351:2019}. The primary difference between them consists in the data origin 
-authentication and message integrity checks, which are only verified during the association establishment in the peer-to-peer implementation, whereas 
-the End-to-End implementation also ensures them in the following data transfer \cite{Review_IEC62351:2019}.
+With regard to MMS messages, the standard prescribes the protection of authenticity, integrity and confidentiality. IEC 62351-4 directly specifies 
+certificate-based TLS to achieve these security goals \cite{SecureMMS:2020}. Furthermore, the standard subdivides the assertion of the security requirements 
+according to the layers of the OSI reference model. The upper three layers are summarized in the application profile and the lower four layers in the 
+transport profile \cite{SecureMMS:2020}. Based on this, the standard specifies that the security system shall verify the authenticity of the communication 
+partner and the integrity of the transmitted messages during the handshake phase of the transport profile \cite{Review_IEC62351:2019}. Following this, the 
+system shall provide confidentiality for the outgoing messages in the data transfer phase \cite{SecureMMS:2020}. With respect to the upper three layers, the 
+standard specifies two possible implementations in the application profile: peer-to-peer security and end-to-end security \cite{Review_IEC62351:2019}. The 
+primary difference between them consists in the data origin authentication and message integrity checks, which are only verified during the association 
+establishment in the peer-to-peer implementation, whereas the end-to-end implementation also ensures them in the following data transfer \cite{Review_IEC62351:2019}.
 
 \smallskip
 For GOOSE messages, the standard argues that the strict real-time requirement of a maximum of 3 ms \cite{GOOSE_confidentiality_integrity:2020} outweighs 
@@ -189,10 +193,11 @@ a packet number field, which is incremented with each subsequent packet. This fi
 the network \cite[p. 145]{IEEE-802-1AE:2018}. 
 
 \smallskip
-To ensure confidentiality and integrity of the transmitted frames, MACsec utilizes Authenticated Encryption with Associated Data (AEAD) cipher suites. 
-These encryption systems typically consist of a symmetric block cipher, which provides the option to encrypt the payload of the message and simultaneously 
-generates a Message Authentication Code (MAC) over the entire message \cite{GOOSE_confidentiality_integrity:2020}. For usage, the IEEE 802.1AE standard 
-specifies four variations of the Advances Encryption System in Galois/Counter Mode (AES-GCM) \cite[p. 143ff]{IEEE-802-1AE:2018}.
+To ensure authenticity, confidentiality and integrity of the transmitted frames, MACsec utilizes Authenticated Encryption with Associated Data (AEAD) 
+cipher suites. These encryption systems typically consist of a symmetric block cipher and a Message Authentication Code (MAC) generator 
+\cite{NIST-AES_GCM:2007}. The first entity of which provides the option to encrypt the payload of the message, while the second entity simultaneously 
+generates a MAC over the entire message \cite{GOOSE_confidentiality_integrity:2020}. For usage, the IEEE 802.1AE standard specifies four variations of 
+the Advances Encryption System in Galois/Counter Mode (AES-GCM) \cite[p. 143ff]{IEEE-802-1AE:2018}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Related Work         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
@@ -239,17 +244,15 @@ systems pose a promising solution, which provides the opportunity to encrypt the
 \smallskip 
 Building on the theoretical proposition of Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016}, we formulate our evaluation of MACsec carried 
 out for use in substations and other power systems based on the IEC 61850 standard. Along with this, we consider the findings of Hussain \textit{et al.} 
-\cite{GOOSE_confidentiality_integrity:2020} in relation to the usage of Encrypt-then-MAC AEAD ciphers in the implementation of our MACsec test environment. 
-From this, our experimental setup enables us to discuss the advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 
-standard. 
+\cite{Review_IEC62351:2019} in relation to the proposed modifications of the security goals for Ethernet-based messaging in IEC 62351 for the implementation 
+of our MACsec test environment. From this, our experimental setup enables us to discuss the advantages and disadvantages of MACsec in comparison with the 
+security goals of the IEC 62351 standard. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 \label{chapter:implementation}
 \noindent To test the mode of communication in a SAS, we implement a test environment consisting of three Bay Level components. As the IEDs take part 
 in all forms of message exchange inside the substation architecture, they are perfectly suitable for testing the communication in conjunction with MACsec. 
-
-\smallskip
 In order to ensure the reproducibility of this study, we decided to use the Raspberry Pi 4 as hardware platform for all devices in the setup. With respect 
 to the software used in the applications, we utilize the open-source library libiec61850\footnote{source: https://libiec61850.com/} to establish the 
 different communication types and data structures of the IEC 61850 standard. To integrate MACsec into the communication, we utilize the MACsec Linux kernel 
@@ -283,7 +286,7 @@ then be requested by IED2 and IED3 via MMS messages.
 \end{figure}
 
 \noindent In addition to the TCP request-response communication via MMS messages, IED1 periodically publishes GOOSE and SV messages in a configurable 
-interval containing the current value of the measurement. The configuration of the GOOSE messages, which contains the corresponding broadcast MAC address, 
+interval containing the current value of the measurement. The configuration of the GOOSE messages, which contains the corresponding multicast MAC address, 
 VLAN ID and VLAN priority, are equally stored in the control unit of the SCL file \cite[p. 189]{IEC61850-8-1:2011}. For the transmission of the SV 
 packets, an Application Protocol Data Unit (APDU) is configured during the initialization phase of the server. This object contains the floating-point 
 number value of the measurement and a message time stamp. As the application progresses, the content of the APDU is periodically updated and published. 
@@ -304,7 +307,7 @@ is carried out identically for MMS communication between IED1 and IED3.
 
 \smallskip
 With regard to the secure publication of GOOSE and SV packets, we established an additional SC (displayed in Figure \ref{image:MACsecTestSetup} as SC2), 
-which is connected to both IED2 and IED3. This configuration enables us to broadcast the messages while simultaneously securing the payload and ensuring 
+which is connected to both IED2 and IED3. This configuration enables us to multicast the messages while simultaneously securing the payload and ensuring 
 authenticity and integrity. Since the configuration of this test environment only allows the publication of GOOSE and SV packets originating from IED1, we 
 only need one SC to secure them in MACsec. Consequently, if IED2 and IED3 are also meant to send secure multicast messages, two additional SCs must be 
 configured.   
@@ -374,10 +377,11 @@ displayed in Figure \ref{image:MMSTimings}.
 
 \noindent As displayed in Figure \ref{image:MMSTimings}, the time measurements for MMS messages vary only marginally regardless of which configuration 
 is considered. It can be seen that the transmission times differ by a factor of 10 compared to the Ethernet-based packets from chapter \ref{subchapter:EvalGOOSESV}.
-This is due to the overhead caused by the additional processing in the higher layers of the OSI stack. Overall, however, the trend in the variance between 
-the different transmission times is consistent with the other measurements. Analog to GOOSE and SV, the IEC 61850 standard specifies a timing requirement 
-for MMS packets of 100 ms \cite{fixedLatencyGOOSESV:2021}. As demonstrated in this measurement, the transmission time of MMS messaging with an active 
-MACsec security module is well below the required time period. 
+This is likely due to the overhead caused by the additional processing in the higher layers of the OSI stack. Moreover, the time measurement for MMS 
+transmission contains the application internal management of the SCL datastructure in IED1, which further impacts the absolute time value of the 
+measurements. However, the trend in the variance between the different transmission times is consistent with the other measurements. Analog to GOOSE 
+and SV, the IEC 61850 standard specifies a timing requirement for MMS packets of 100 ms \cite{fixedLatencyGOOSESV:2021}. As demonstrated in this 
+measurement, the transmission time of MMS messaging with an active MACsec security module is well below the required time period. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Conclusion          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
@@ -390,12 +394,12 @@ our measurement results, whether the time and security requirements of the IEC 6
 \smallskip
 With regard to the time requirements of the messages, Chapter \ref{chapter:evaluation} shows that all packets are transmitted in well below the required 
 time periods. In addition to this, the measurements prove that the optionally activatable encryption of the AEAD cipher does not lead to a major increase 
-in computational overhead. Therefore, confidentiality can be added to the security goals for all message types, regardless of the OSI model layer on which they 
-operate. 
+in computational overhead. Therefore, confidentiality can be added to the security goals for all message types, regardless of the OSI model layer on which 
+they operate. 
 
 \smallskip
-Only the IEC 62351 requirement that a complete end-to-end security model for power systems shall be implemented \cite{Review_IEC62351:2019} cannot be 
-fulfilled by MACsec. Due to the underlying architecture of this security standard, MACsec provides encryption of Ethernet-based packets, but must therefore 
+Only the IEC 62351 requirement mandating that a complete end-to-end security model for power systems shall be implemented \cite{Review_IEC62351:2019} cannot 
+be fulfilled by MACsec. Due to the underlying architecture of this security standard, MACsec provides encryption of Ethernet-based packets, but must therefore 
 be re-encrypted at each hop of the transmission. Other security standards such as TLS would fulfill this requirement, as they operate based on the TCP 
 frame structure and can therefore be routed without a decryption of the message. However, simultaneously, packets below layer 4 of the OSI stack cannot 
 be processed with TLS, which again would result in GOOSE and SV packets being transmitted unencrypted if implemented in a SAS. For this reason, we propose 
