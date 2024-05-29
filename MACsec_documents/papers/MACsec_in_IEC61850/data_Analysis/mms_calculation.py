@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Read the data from a CSV file
-df = pd.read_csv('raw_data/MMS_AES_integrity.csv')
+df = pd.read_csv('raw_data/2_MMS_no_encryption.csv')
 
 # Initialize a list to hold the periods
 periods = []

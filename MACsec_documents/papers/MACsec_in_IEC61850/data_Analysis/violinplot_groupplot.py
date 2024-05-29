@@ -4,33 +4,30 @@ import numpy as np
 
 # Parameters for file paths
 GOOSE_PATHS = [
-    ('duration_data/durations_GOOSE_no_encryption.csv', 'GOOSE\n(no encryption)'),
-    ('duration_data/durations_GOOSE_AES_encryption.csv', 'GOOSE\n(MACsec encrypted)'),
-    ('duration_data/durations_GOOSE_AES_integrity.csv', 'GOOSE\n(MACsec integrity)')
+    ('duration_data/GOOSE_intervals/durations_GOOSE_no_encryption.csv', 'GOOSE\n(no encryption)'),
+    ('duration_data/GOOSE_intervals/durations_GOOSE_AES_encryption.csv', 'GOOSE\n(MACsec encrypted)'),
+    ('duration_data/GOOSE_intervals/durations_GOOSE_AES_integrity.csv', 'GOOSE\n(MACsec integrity)')
 ]
 
 SV_PATHS = [
-    ('duration_data/durations_SV_no_encryption.csv', 'SV\n(no encryption)'),
-    ('duration_data/durations_SV_AES_encryption.csv', 'SV\n(MACsec encrypted)'),
-    ('duration_data/durations_SV_AES_integrity.csv', 'SV\n(MACsec integrity)')
+    ('duration_data/SV_intervals/durations_SV_no_encryption.csv', 'SV\n(no encryption)'),
+    ('duration_data/SV_intervals/durations_SV_AES_encryption.csv', 'SV\n(MACsec encrypted)'),
+    ('duration_data/SV_intervals/durations_SV_AES_integrity.csv', 'SV\n(MACsec integrity)')
 ]
 
 MMS_PATHS = [
-    ('duration_data/durations_MMS_no_encryption.csv', 'MMS\n(no encryption)'),
-    ('duration_data/durations_MMS_AES_encryption.csv', 'MMS\n(MACsec encrypted)'),
-    ('duration_data/durations_MMS_AES_integrity.csv', 'MMS\n(MACsec integrity)')
+    ('duration_data/MMS_intervals/durations_MMS_no_encryption.csv', 'MMS\n(no encryption)'),
+    ('duration_data/MMS_intervals/durations_MMS_AES_encryption.csv', 'MMS\n(MACsec encrypted)'),
+    ('duration_data/MMS_intervals/durations_MMS_AES_integrity.csv', 'MMS\n(MACsec integrity)')
 ]
 
-ALL_PATHS = [
-    ('duration_data/durations_GOOSE_no_encryption.csv', 'GOOSE (no encryption)'),
-    ('duration_data/durations_GOOSE_AES_encryption.csv', 'MACsec secured GOOSE'),
-    ('duration_data/durations_SV_no_encryption.csv', 'SV (no encryption)'),
-    ('duration_data/durations_SV_AES_encryption.csv', 'MACsec secured SV'),
-    ('duration_data/durations_MMS_no_encryption.csv', 'MMS (no encryption)'),
-    ('duration_data/durations_MMS_AES_encryption.csv', 'MACsec secured MMS')
+MMS2_PATHS = [
+    ('duration_data/MMS_intervals/2_durations_MMS_no_encryption.csv', 'MMS\n(no encryption)'),
+    ('duration_data/MMS_intervals/2_durations_MMS_AES_encryption.csv', 'MMS\n(MACsec encrypted)'),
+    ('duration_data/MMS_intervals/2_durations_MMS_AES_integrity.csv', 'MMS\n(MACsec integrity)')
 ]
 
-FILE_PATHS = MMS_PATHS
+FILE_PATHS = MMS2_PATHS
 
 # Read data from all CSV files
 duration_data_all = []
