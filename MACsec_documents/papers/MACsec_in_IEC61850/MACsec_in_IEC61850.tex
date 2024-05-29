@@ -374,13 +374,14 @@ displayed in Figure \ref{image:MMSTimings}.
     \label{image:MMSTimings}
 \end{figure}
 
-\noindent As displayed in Figure \ref{image:MMSTimings}, the time measurements for MMS messages vary only marginally regardless of which configuration 
-is considered. It can be seen that the transmission times differ by a factor of 10 compared to the Ethernet-based packets from chapter \ref{subchapter:EvalGOOSESV}.
-This is likely due to the overhead caused by the additional processing in the higher layers of the OSI stack. Moreover, the time measurement for MMS 
-transmission contains the application internal management of the SCL data structure in IED1, which further impacts the absolute time of the measurements. 
-However, the trend in the variance between the different transmission times is consistent with the other measurements. Analog to GOOSE and SV, the IEC 
-61850 standard specifies a timing requirement for MMS packets of 100 ms \cite{fixedLatencyGOOSESV:2021}. As demonstrated in this measurement, the 
-transmission time of MMS messaging with an active MACsec security module is well below the required time period. 
+\noindent As displayed in Figure \ref{image:MMSTimings}, the time measurements for MMS messages vary only marginally when compared to the transmission 
+times of the Ethernet-based packets discussed in chapter \ref{subchapter:EvalGOOSESV}. This delay is likely due to the overhead caused by the additional 
+processing in the higher layers of the OSI stack. Moreover, the time measurement for MMS transmission contains the application internal management of 
+the SCL data structure in IED1, which further impacts the absolute transmission time of the measurements. However, the trend in the variance between 
+the different test configurations is consistent with the other measurements, as the additional processing time for the MACsec protection of the frame 
+is set to approximately 100 $\mu$s. Analog to GOOSE and SV, the IEC 61850 standard specifies a timing requirement for MMS packets of 100 ms 
+\cite{fixedLatencyGOOSESV:2021}. As demonstrated in this measurement, the transmission time of MMS messaging with an active MACsec security module is 
+well below the required time period. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Conclusion          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
@@ -405,6 +406,10 @@ be processed with TLS, which again would result in GOOSE and SV packets being tr
 a hybrid implementation of both standards in a SAS for future work. In this scenario, MACsec could be used for LAN-internal communication security, while 
 TLS provides the protection from a gateway component to external communication partners.    
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Acknowledgments       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acknowledgments}
+The presented work is part of the research project \emph{KRITIS Scalable Safe and Secure Modules} (KRITIS³M), which is funded by the Project Management 
+Jülich (PtJ) and the German Federal Ministry for Economic Affairs and Climate Action (BMWK) under funding code 03EI6089A.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     Begin of References      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \printbibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
