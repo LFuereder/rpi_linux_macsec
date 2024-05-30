@@ -97,10 +97,10 @@ this is then evaluated in chapter \ref{chapter:evaluation} and is placed in the 
 
 \subsection{Overview of the IEC 61850 Standard}
 \label{subchapter:IEC61850}
-Among other standards used for communication is industrial applications, power systems primarily utilize the IEC 61850 standard \cite{IEC61850:2023}, 
+Among other standards used for communication in industrial applications, power systems primarily utilize the IEC 61850 standard \cite{IEC61850:2023}, 
 which is published and maintained by the International Electrotechnical Comission (IEC) \cite{IEC61850_Overview:2006}. This standard specifies the 
-transmission of diagnostic information, measurement values or control signals among devices structured in a three level architecture 
-\cite{SGRWin_IEC61850Architecture:2021}, as displayed in Figure \ref{image:IEC61850Architecture}. The major advantage in this type of communication consists 
+transmission of diagnostic information, measurement values or control signals among devices structured in a hirachical three level architecture 
+\cite{SGRWin_IEC61850Architecture:2021}, as displayed in Figure \ref{image:IEC61850Architecture}. The major advantage with this type of communication consists 
 of the object-oriented data structure defined in this standard, which makes the integration of various components developed by different vendors possible 
 \cite[p. 5643]{Review_IEC62351:2019}. 
 
@@ -111,29 +111,29 @@ of the object-oriented data structure defined in this standard, which makes the 
     \label{image:IEC61850Architecture}
 \end{figure}
 
-\noindent At the lowest point, the Process level contains devices tasked with the actual power management. Examples for these are: transformers, circuit 
-breakers, Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level components 
-periodically publish measurement information to all subscribing communication partners in the Bay Level via Sampled-Value (SV) packets 
+\noindent Closest to the powerlines, the \textit{Process Level} contains devices tasked with the actual power regulation. Examples for these are: transformers, 
+circuit breakers, Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level 
+components periodically publish measurement information to all subscribing communication partners in the Bay Level via Sampled-Value (SV) packets 
 \cite{TyphoonHIL_IEC61850SV:2021}. This communication involves LAN-internal multicast packets, which take place exclusively on the second layer 
 (Data Link Layer) of the Open System Interconnection (OSI) model \cite{TyphoonHIL_IEC61850SV:2021}. 
 
 \smallskip
-The Bay Level above contains the Intelligent Electronic Devices (IEDs), each of which represents a transformation field in the substation 
+The \textit{Bay Level} above contains the Intelligent Electronic Devices (IEDs), each of which represents a transformation field in the substation 
 \cite[p. 29]{IEC61850-7-1:2011}. The IEDs gather the measurement data from the Process Level and initially process them. The resulting information 
 is then communicated through Manufacturing Message Specification (MMS) packets to other IEDs and the Station Level components \cite[p. 44]{IEC61850-8-1:2011}. 
 Simultaneously, the IEDs receive control signals from the Station Level, which are also transmitted via MMS packets \cite{trafficGen_IEC61850:2011}. 
 As the Station Level components are not necessarily located in the same LAN as the IEDs, the MMS messaging is implemented through TCP packets on the 
 fourth layer (Transport Layer) of the OSI model \cite[p. 45]{IEC61850-8-1:2011}. In addition to the MMS messaging, the IEDs use Generic Object 
-Oriented Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Similar to SV, GOOSE messages are implemented through 
-multicast Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
+Oriented Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Similar to SV, GOOSE messages are implemented on layer 2 if the OSI 
+model through multicast Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
 
 \smallskip
-The devices located in the Station Level of the architecture are responsible for controlling the SAS. This is achieved through MMS packets addressed 
+The devices located in the \textit{Station Level} of the architecture are responsible for controlling the SAS. This is achieved through MMS packets addressed 
 to specific IEDs and the presentation of the processed information in graphical illustrations to the user \cite{SGRWin_IEC61850Architecture:2021}. 
 For this, the Station Level components typically consist of a Supervisory Control and Data Acquisition (SCADA) component and a Human-Machine-Interface 
 (HMI). Lastly, as displayed in Figure \ref{image:IEC61850Architecture}, it is possible to transmit GOOSE messages to the Station Level components. 
 For this, the IEC 61850-90-5 standard \cite{IEC61850-90-5:2012} defines a routable version of the layer two GOOSE frame. For this purpose, the GOOSE 
-packets are extended by adding network and transport layer headers to form a UDP packet, which is routable throughout a Wide Area Network (WAN) 
+packets are extended by adding network and transport layer headers to form a UDP packet, which can be routed through multiple hops in a Wide Area Network (WAN) 
 \cite{routable_GOOSE_SV:2020}.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
@@ -164,10 +164,10 @@ usage of digital signatures for SV packets \cite{Review_IEC62351:2019}.
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{Fundamentals of the MACsec Security Standard}
 \noindent MACsec represents an information security standard which protects messages on the second layer (Data Link Layer) of the OSI model. In contrast 
-to security standards operating in higher layers of the TCP/IP stack (e.g. TLS), which provide end-to-end encryption, MACsec verifies the integrity and 
-authenticity of a packet within each hop of the transmission \cite{Cybersecurity_Substation:2016}. However, this lower layer implementation close to the 
-PHY enables MACsec to secure communication which takes place exclusively on layer 2 (e.g. SV \& GOOSE). The following paragraph explains the most important 
-aspects of the MACsec standard, which are responsible for ensuring the authenticity, integrity and confidentiality of the transmitted packets.
+to security standards operating in higher layers of the TCP/IP stack (e.g. TLS), which provide end-to-end encryption, MACsec verifies the confidentiality, 
+integrity and authenticity of a packet within each hop of the transmission \cite{Cybersecurity_Substation:2016}. However, this lower layer implementation 
+close to the PHY enables MACsec to secure communication which takes place exclusively on layer 2 (e.g. SV \& GOOSE). The following paragraph explains the 
+most important aspects of the MACsec standard, which are responsible for ensuring the authenticity, integrity and confidentiality of the transmitted packets.
 
 \begin{figure}[h]
     \centering
@@ -176,7 +176,7 @@ aspects of the MACsec standard, which are responsible for ensuring the authentic
     \label{image:MACsecEntities}
 \end{figure}
 
-\noindent As displayed in Figure \ref{image:MACsecEntities}, the communicating devices are initially grouped in Connectivity Associations (CAs), which 
+\noindent As displayed in Figure \ref{image:MACsecEntities}, the communicating devices are initially grouped into Connectivity Associations (CAs), which 
 represent the logical separation of secured communication areas \cite[p. 35]{IEEE-802-1AE:2018}. Each member of a CA possesses the associated Connectivity 
 Association Key (CAK), which is later used to generate the individual session keys. Similar to other encryption systems, the CAK acts as a shared 
 secret between the individual parties and is therefore used to verify the authenticity of of other devices in the same CA. In the IEEE 802.1AE standard, 
@@ -207,7 +207,7 @@ related work display these important aspects and are therefore relevant for the 
 communication.
 
 \smallskip
-Mackiewicz \cite{IEC61850_Overview:2006} describes the overall usage of the IEC 61850 protocol by displaying key features as well as the general aspects 
+Mackiewicz \cite{IEC61850_Overview:2006} describes the overall usage of the IEC 61850 protocol by illustrating key features as well as the general aspects 
 of IEC 61850 compliant communication. Since this standard represents a core part of the communication inside of power grid systems, it is vital to 
 understand the corresponding aspects such as communication paths, model structures or data addressing in order to design a representative test environment. 
 
@@ -230,7 +230,7 @@ Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016} evaluate various ap
 of the communication structures in substations is presented. Building on this, various established security approaches are explained and evaluated based 
 on the protection objectives of the IEC 62351 standard. The authors also point out possible implementation problems, such as incompatibilities between 
 the security systems and the communication protocols or the handling of redundant packets inside ring-topology networks. In the further course of the 
-paper, they present the idea of MACsec-based communication security in SASs and the associated advantages and challenges that arise with it. 
+paper, the authors propose the idea of MACsec-based communication security in SASs and discuss the possible advantages and challenges that arise with it. 
 
 \smallskip
 Hussain \textit{et al.} \cite{GOOSE_confidentiality_integrity:2020} analyzed possible GOOSE security implementations based on their preceding review 
@@ -241,16 +241,16 @@ of the paper, they compare encryption and signature times between different AEAD
 systems pose a promising solution, which provides the opportunity to encrypt the message while simultaneously  meeting the 3 ms timing requirement.
 
 \smallskip 
-Building on the theoretical proposition of Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016}, we formulate our evaluation of MACsec carried 
-out for use in substations and other power systems based on the IEC 61850 standard. Along with this, we consider the findings of Hussain \textit{et al.} 
-\cite{Review_IEC62351:2019} in relation to the proposed modifications of the security goals for Ethernet-based messaging in IEC 62351 for the implementation 
-of our MACsec test environment. From this, our experimental setup enables us to discuss the advantages and disadvantages of MACsec in comparison with the 
-security goals of the IEC 62351 standard. 
+Building on the theoretical proposition of Moreira \textit{et al.} \cite{Cybersecurity_Substation:2016}, we formulate our evaluation of MACsec for use in 
+substations and other power systems based on the IEC 61850 standard. Along with this, we consider the findings of Hussain \textit{et al.} \cite{Review_IEC62351:2019} 
+in relation to the proposed modifications of the security goals for Ethernet-based messaging in IEC 62351 for the implementation of our MACsec test environment. 
+From this, our experimental setup enables us to discuss the advantages and disadvantages of MACsec in comparison with the security goals of the IEC 62351 
+standard as well as the timing requirements of the IEC 61850 standard. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Implementation        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 \label{chapter:implementation}
-\noindent To test the mode of communication in a SAS, we implement a test environment consisting of three Bay Level components. As the IEDs take part 
+\noindent To display the communication in a SAS, we implement a test environment consisting of three Bay Level components. As the IEDs take part 
 in all forms of message exchange inside the substation architecture, they are perfectly suitable for testing the communication in conjunction with MACsec. 
 In order to ensure the reproducibility of this study, we decided to use the Raspberry Pi 4 as hardware platform for all devices in the setup. With respect 
 to the software used in the applications, we utilize the open-source library libiec61850\footnote{source: https://libiec61850.com/} to establish the 
@@ -261,9 +261,9 @@ we integrate the WiringPi\footnote{source: https://github.com/WiringPi/WiringPi}
 hardware platform and results in precise time measurement across several communication participants. 
 
 \smallskip 
-The remainder of this chapter is structured as follows: Chapter \ref{subchapter:TestEnvironmentStructure} initially explains the overall structure of the 
-test environment. Building on this, Chapter \ref{subchapter:TestEnvironmentMACsec} describes the additive MACsec configuration and the corresponding entities 
-of the security standard. Lastly, Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions and transmission time measurement. 
+The remainder of this chapter proceeds as follows: Chapter \ref{subchapter:TestEnvironmentStructure} initially explains the overall structure of the 
+test environment. Chapter \ref{subchapter:TestEnvironmentMACsec} describes the optionally activatable MACsec configuration and the corresponding entities 
+of the security standard. Lastly, Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions and the transmission time measurement. 
 
 \subsection{Structure of the Test Environment}
 \label{subchapter:TestEnvironmentStructure}
@@ -273,8 +273,8 @@ in IEC 61850-6 \cite{IEC61850-6:2010}. This file contains the communication and 
 
 \smallskip
 In our case, we integrate a measurement unit (MMXU) \cite[p. 268]{IEC61850-7-4:2010} and a control unit (LLN0) \cite[p. 164]{IEC61850-7-4:2010} 
-into the SCL file. During runtime, IED1 continuously populates the data points of the measuring unit with sampled values of a sinusoidal function. In 
-addition to the actual measurement, each sampled value contains a time stamp and a quality index \cite[p. 61ff]{IEC61850-7-3:2010}. These values can 
+into the SCL file of IED1. During runtime, IED1 continuously populates the data points of the measuring unit with sampled values of a sinusoidal function. 
+In addition to the actual measurement, each sampled value contains a time stamp and a quality index \cite[p. 61ff]{IEC61850-7-3:2010}. These values can 
 then be requested by IED2 and IED3 via MMS messages.
 
 \begin{figure}[h]
@@ -288,33 +288,31 @@ then be requested by IED2 and IED3 via MMS messages.
 interval containing the current value of the measurement. The configuration of the GOOSE messages, which contains the corresponding multicast MAC address, 
 VLAN ID and VLAN priority, are equally stored in the control unit of the SCL file \cite[p. 189]{IEC61850-8-1:2011}. For the transmission of the SV 
 packets, an Application Protocol Data Unit (APDU) is configured during the initialization phase of the server. This object contains the floating-point 
-value of the measurement and a message time stamp. As the application progresses, the content of the APDU is periodically updated and published. 
-
-\smallskip 
+value of the latest measurement and a message time stamp. As the application progresses, the content of the APDU is periodically updated and published. 
 On the subscriber side, the subscription to the corresponding events (in this case GOOSE and SV) is implemented in software in the form of asynchronous 
 handler functions, which subsequently log the incoming information. 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{MACsec integration in the Test Environment}
 \label{subchapter:TestEnvironmentMACsec}
-\noindent Building on the general structure described in Chapter \ref{subchapter:TestEnvironmentStructure}, the implementation of MACsec into the test 
-setup can now be explained. Initially, we integrated all devices in the same CA by distributing a pre-shared CAK. Based on this key, the various SCs and 
-SAs can be established as shown in Figure \ref{image:MACsecTestSetup}. For bidirectional MMS communication between two IEDs, one SC is required for each 
-communication direction. Using the example of packet exchange between IED1 and IED2, we have configured the secure channels SC0 and SC1 for this purpose. 
-Each of these channels derives its own SAK from the CAK and establishes a secure connection for the duration of the SA. The establishment of SC3 and SC4 
-is carried out identically for MMS communication between IED1 and IED3.
+\noindent Building on the general structure of the test environment described in Chapter \ref{subchapter:TestEnvironmentStructure}, the implementation of 
+MACsec into the test setup can now be explained. Initially, we integrate all devices in the same CA by distributing a pre-shared CAK. Based on this key, 
+the various SCs and SAs can be established as shown in Figure \ref{image:MACsecTestSetup}. For bidirectional MMS communication between two IEDs, one SC is 
+required for each communication direction. Using the example of packet exchange between IED1 and IED2, we have configured the secure channels SC0 and SC1 
+for this purpose. Each of these channels derives its own SAK from the CAK and establishes a secure connection for the duration of the SA. The establishment 
+of SC3 and SC4 is carried out identically for MMS communication between IED1 and IED3.
 
 \smallskip
 With regard to the secure publication of GOOSE and SV packets, we established an additional SC (displayed in Figure \ref{image:MACsecTestSetup} as SC2), 
 which is connected to both IED2 and IED3. This configuration enables us to multicast the messages while simultaneously securing the payload and ensuring 
 authenticity and integrity. Since the configuration of this test environment only allows the publication of GOOSE and SV packets originating from IED1, 
-we only need one SC to secure them in MACsec. Consequently, if IED2 and IED3 are also meant to send secure multicast messages, two additional SCs must be 
+we only need one SC to secure them with MACsec. Consequently, if IED2 and IED3 are also meant to send secure multicast messages, two additional SCs must be 
 configured.   
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{Definition of the Test Procedures}
 \label{subchapter:TestProcedures}
-\noindent To evaluate whether this MACsec implementation fulfills the requirements of the IEC 62351 standard, we conduct a measurement of the 
+\noindent To evaluate whether this MACsec implementation fulfills the time requirements of the IEC 61850 standard, we conduct a measurement of the 
 transmission times for each of the different message types. In order to achieve a precise time measurement, we expanded the implementation of the server 
 and the client application to toggle a General Purpose Input/Output (GPIO) pin during transmission and reception of the associated frame type. 
 By using an external logic analyzer, the times between the voltage level shifts can be measured. Since this measurement is performed by an external device, 
@@ -324,9 +322,13 @@ we do not need clock synchronization between the communication participants, whi
 \section{Evaluation}
 \label{chapter:evaluation}
 \noindent Based on the implementation design explained in Chapter \ref{chapter:implementation}, a number of transmission time measurements can be 
-executed. In the following, we initially compare the times in three different configurations in order to be able to investigate the temporal influence 
-of the security module. The first step here is to measure without frame protection, followed by MACsec with integrity check and encryption and lastly 
-solely MACsec integrity check. These measurements are carried out in the following chapters for all IEC 61850 message types.
+executed. We compare the times in three different configurations in order to be able to investigate the temporal influence of the security module. 
+The first step is to measure the transmission times without the security module active, followed by MACsec frame protection with integrity check and 
+encryption and lastly solely with MACsec integrity check. These measurements are carried out in the following chapters for all IEC 61850 message types.
+
+\smallskip
+The further course of this chapter is structured as follows: Chapter \ref{subchapter:EvalGOOSESV} illustrates the measurement results for GOOSE and SV messages
+and Chapter \ref{subchapter:EvalMMS} presents the results for MMS messages.
 
 \subsection{Temporal Influence of MACsec on SV and GOOSE messages}
 \label{subchapter:EvalGOOSESV}
@@ -353,11 +355,11 @@ displayed in Figures \ref{imgae:GOOSETimings} and \ref{image:SVTimings}.
 \end{figure}
 
 \noindent As can be seen here, both Ethernet-based packets are transmitted in well below the IEC 61850 standard specification of 3 ms 
-\cite{fixedLatencyGOOSESV:2021} regardless of the configuration. Furthermore, securing the packets results solely in an extension of the transmission 
-time of approximately 100 $\mu$s for both message types. Lastly, it can be seen that activating the encryption in the AEAD cipher leads to a minimal 
+\cite{fixedLatencyGOOSESV:2021} regardless of the chosen configuration. Furthermore, securing the packets results in an extension of the transmission 
+time of approximately 100 $\mu$s for both message types. It can be seen that activating the encryption in the AEAD cipher leads to a minimal 
 increase in transmission time. This is likely due to the necessary rearrangement of the data payload into the Ethernet frame, which is not needed 
 if only integrity checks are performed. Overall, the change in transmission times between these two configurations is nevertheless minimal at around 
-6 $\mu$s. 
+6 $\mu$s for both message types. 
 
 \subsection{Temporal Influence of MACsec on MMS messages}
 \label{subchapter:EvalMMS}
@@ -387,9 +389,9 @@ well below the required time period.
 \section{Conclusion}
 \label{chapter:conclusion}
 \noindent The aim of this paper was to investigate the extent to which the integration of MACsec in industrial communication would provide a viable 
-alternative to the currently established security systems. In order to be able to evaluate this possibility correctly, we implemented a test environment  
+alternative to the currently established security systems. In order to be able to evaluate this correctly, we implemented a test environment  
 consisting of three IEDs, which can be configured to exchange the desired IEC 61850 messages. Going further, we evaluated, based on 
-our measurement results, whether the time and security requirements of the IEC 61850 and IEC 62351 standards can be considered fulfilled.  
+our measurement results, whether the timing and security requirements of the IEC 61850 and IEC 62351 standards can be considered fulfilled.  
 
 \smallskip
 With regard to the time requirements of the messages, Chapter \ref{chapter:evaluation} shows that all packets are transmitted in well below the required 
