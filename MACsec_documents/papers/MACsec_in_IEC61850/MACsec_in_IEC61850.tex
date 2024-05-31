@@ -99,7 +99,7 @@ the data gathered is evaluated and placed in the context of the mandated securit
 
 \subsection{Overview of the IEC 61850 Standard}
 \label{subchapter:IEC61850}
-Among other standards used for communication in industrial applications, power systems primarily utilize the IEC 61850 standard \cite{IEC61850:2023}, 
+\noindent Among other standards used for communication in industrial applications, power systems primarily utilize the IEC 61850 standard \cite{IEC61850:2023}, 
 which is published and maintained by the International Electrotechnical Comission (IEC) \cite{IEC61850_Overview:2006}. This standard specifies the 
 transmission of diagnostic information, measurement values or control signals among devices structured in a hierarchical three level architecture 
 \cite{SGRWin_IEC61850Architecture:2021}, as displayed in Figure \ref{image:IEC61850Architecture}. The major advantage with this type of communication 
@@ -113,10 +113,10 @@ possible \cite[p. 5643]{Review_IEC62351:2019}.
     \label{image:IEC61850Architecture}
 \end{figure}
 
-\noindent Closest to the power lines, the \textit{Process Level} contains devices tasked with the actual power regulation. Examples for these are: transformers, 
-circuit breakers, Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, Process Level 
-components periodically publish measurement information to all subscribing communication partners in the Bay Level via Sampled-Value (SV) packets 
-\cite{TyphoonHIL_IEC61850SV:2021}. This communication involves LAN-internal multicast packets, which take place exclusively on the second layer 
+\noindent Closest to the power lines, the \textit{Process Level} contains devices tasked with the actual power regulation. Examples for these are: 
+transformers, circuit breakers, Programmable Logic Controllers (PLCs) and measurement units \cite{SGRWin_IEC61850Architecture:2021}. Upon configuration, 
+Process Level components periodically publish measurement information to all subscribing communication partners in the Bay Level via Sampled-Value (SV) 
+packets \cite{TyphoonHIL_IEC61850SV:2021}. This communication involves LAN-internal multicast packets, which take place exclusively on the second layer 
 (Data Link Layer) of the Open System Interconnection (OSI) model \cite{TyphoonHIL_IEC61850SV:2021}. 
 
 \smallskip
@@ -126,17 +126,17 @@ is then communicated through Manufacturing Message Specification (MMS) packets t
 Simultaneously, the IEDs receive control signals from the Station Level, which are also transmitted via MMS packets \cite{trafficGen_IEC61850:2011}. 
 As the Station Level components are not necessarily located in the same LAN as the IEDs, the MMS messaging is implemented through TCP packets on the 
 fourth layer (Transport Layer) of the OSI model \cite[p. 45]{IEC61850-8-1:2011}. In addition to the MMS messaging, the IEDs use Generic Object 
-Oriented Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Similar to SV, GOOSE messages are implemented on layer 2 if the OSI 
-model through multicast Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
+Oriented Substation Events (GOOSE) to send time-critical information to surrounding IEDs. Similar to SV, GOOSE messages are implemented on layer 2 if 
+the OSI model through multicast Ethernet packets in the LAN \cite{GOOSE_confidentiality_integrity:2020}.
 
 \smallskip
-The devices located in the \textit{Station Level} of the architecture are responsible for controlling the SAS. This is achieved through MMS packets addressed 
-to specific IEDs and the presentation of the processed information in graphical illustrations to the user \cite{SGRWin_IEC61850Architecture:2021}. 
+The devices located in the \textit{Station Level} of the architecture are responsible for controlling the SAS. This is achieved through MMS packets 
+addressed to specific IEDs and the presentation of the processed information in graphical illustrations to the user \cite{SGRWin_IEC61850Architecture:2021}. 
 For this, the Station Level components typically consist of a Supervisory Control and Data Acquisition (SCADA) component and a Human-Machine-Interface 
 (HMI). As displayed in Figure \ref{image:IEC61850Architecture}, it is possible to transmit GOOSE messages to the Station Level components. 
 For this, the IEC 61850-90-5 standard \cite{IEC61850-90-5:2012} defines a routable version of the layer two GOOSE frame. For this purpose, the GOOSE 
-packets are extended by adding network and transport layer headers to form a UDP packet, which can be routed through multiple hops in a Wide Area Network (WAN) 
-\cite{routable_GOOSE_SV:2020}.
+packets are extended by adding network and transport layer headers to form a UDP packet, which can be routed through multiple hops in a Wide Area Network 
+(WAN) \cite{routable_GOOSE_SV:2020}.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------%
 \subsection{Message Security according to IEC 62351}
@@ -209,9 +209,10 @@ related work display these important aspects and are therefore relevant for the 
 communication.
 
 \smallskip
-Mackiewicz \cite{IEC61850_Overview:2006} describes the overall usage of the IEC 61850 protocol by illustrating key features as well as the general aspects 
-of IEC 61850 compliant communication. Since this standard represents a core part of the communication inside of power grid systems, it is vital to 
-understand the corresponding aspects such as communication paths, model structures or data addressing in order to design a representative test environment. 
+Mackiewicz \cite{IEC61850_Overview:2006} describes the overall usage of the IEC 61850 protocol by illustrating key features as well as the general 
+aspects of IEC 61850 compliant communication. Since this standard represents a core part of the communication inside of power grid systems, it is vital 
+to understand the corresponding aspects such as communication paths, model structures or data addressing in order to design a representative test 
+environment. 
 
 \smallskip
 Hussain  \textit{et al.} \cite{Review_IEC62351:2019} published a paper assessing the IEC 62351 standard and its security mechanisms towards IEC 61850 
@@ -264,8 +265,9 @@ hardware platform and results in precise time measurement across several communi
 
 \smallskip 
 The remainder of this chapter proceeds as follows: Chapter \ref{subchapter:TestEnvironmentStructure} initially explains the overall structure of the 
-test environment. Chapter \ref{subchapter:TestEnvironmentMACsec} describes the optionally activatable MACsec configuration and the corresponding entities 
-of the security standard. Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions and the transmission time measurement. 
+test environment. Chapter \ref{subchapter:TestEnvironmentMACsec} describes the optionally activatable MACsec configuration and the corresponding 
+entities of the security standard. Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions and the transmission time 
+measurement. 
 
 \subsection{Structure of the Test Environment}
 \label{subchapter:TestEnvironmentStructure}
@@ -317,8 +319,9 @@ be configured.
 \noindent To evaluate whether this MACsec implementation fulfills the time requirements of the IEC 61850 standard, we conduct a measurement of the 
 transmission times for each of the different message types. In order to achieve a precise time measurement, we expanded the implementation of the server 
 and the client application to toggle a General Purpose Input/Output (GPIO) pin during transmission and reception of the associated frame type. 
-By using an external logic analyzer, the times between the voltage level shifts can be measured. Since this measurement is performed by an external device, 
-we do not need clock synchronization between the communication participants, which significantly reduces the implementation efforts of the measurement. 
+By using an external logic analyzer, the times between the voltage level shifts can be measured. Since this measurement is performed by an external 
+device, we do not need clock synchronization between the communication participants, which significantly reduces the implementation efforts of the 
+measurement. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         Evaluation          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Evaluation}
@@ -336,8 +339,8 @@ messages and Chapter \ref{subchapter:EvalMMS} presents the results for MMS messa
 \label{subchapter:EvalGOOSESV}
 \noindent For the GOOSE and SV measurement, IED1 was configured in the test setup so that the corresponding packets are published periodically at 
 intervals of 500 ms. In the next step, the temporal delay to the handler function of the client side was measured. This measurement was then repeated 
-1000 times without additional computational load for both configurations and is therefore under ideal conditions. The results of these measurements are 
-displayed in Figures \ref{imgae:GOOSETimings} and \ref{image:SVTimings}.
+1000 times without additional computational load for both configurations and is therefore under ideal conditions. The results of these measurements 
+are displayed in Figures \ref{imgae:GOOSETimings} and \ref{image:SVTimings}.
 
 \begin{figure}[h]
     \centering
@@ -405,10 +408,10 @@ they operate.
 Only the IEC 62351 requirement mandating that a complete end-to-end security model for power systems shall be implemented \cite{Review_IEC62351:2019} 
 cannot be fulfilled by MACsec. Due to the underlying architecture of this security standard, MACsec provides encryption of Ethernet-based packets, but 
 must therefore be re-encrypted at each hop of the transmission. Other security standards such as TLS would fulfill this requirement, as they operate based 
-on the TCP frame structure and can therefore be routed without a decryption of the message. However, simultaneously, packets below layer 4 of the OSI stack 
-cannot be processed with TLS, which again would result in GOOSE and SV packets being transmitted unencrypted if implemented in a SAS. For this reason, we 
-propose a hybrid implementation of both standards in a SAS for future work. In this scenario, MACsec could be used for LAN-internal communication security, 
-while TLS provides the protection from a gateway component to external communication partners.    
+on the TCP frame structure and can therefore be routed without a decryption of the message. However, simultaneously, packets below layer 4 of the OSI 
+stack cannot be processed with TLS, which again would result in GOOSE and SV packets being transmitted unencrypted if implemented in a SAS. For this 
+reason, we propose a hybrid implementation of both standards in a SAS for future work. In this scenario, MACsec could be used for LAN-internal communication 
+security, while TLS provides the protection from a gateway component to external communication partners.    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Acknowledgments       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Acknowledgments}
