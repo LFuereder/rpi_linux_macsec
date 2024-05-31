@@ -22,7 +22,7 @@
 
 \begin{document}
 
-\title{Assessment of a MACsec-based security system for use in critical Infrastructure Communication}
+\title{Assessment of a MACsec-based Security System for Use in Critical Infrastructure Communication}
 
 \author{\IEEEauthorblockN{Lukas F{\"u}reder, Prof. Dr. J{\"u}rgen Mottok}
     \IEEEauthorblockA{\textit{Technical University of Applied Sciences Regensburg (OTH)} \\
@@ -65,14 +65,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      Start of the Text      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 \label{chapter:introduction}
-\noindent Companies classified as critical infrastructure, for example water supply facilities, power plants and their corresponding distribution systems, 
-can constitute an attractive target for cyber attacks, which could disrupt the supply of basic resources to entire countries. As a result, laws such as 
-the Network and Information Security Act (NIS-2) \cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} enforced by the German 
-Federal Office for Information Security (BSI) demand a unified level of cybersecurity for these entities. In these regulations, the councils prescribe 
-that the companies must adhere to information security standards, which mandate the current requirements for secure communication and cryptography 
-\cite[p. 9]{BSI-ISMS:2017}. Furthermore, the extension of the IT Act 2.0 dictates that these companies are obliged to provide proof of compliance with 
-the security requirements over a two-year period \cite[§11 (1e)]{IT-Gesetz_2:2021}. This decision is intended to ensure the future operability of the 
-security systems with respect to adapting changes of the latest technologies. 
+\noindent The steady progress of digitalization is creating many new opportunities for society, business and science. However, this increasing connectivity 
+especially among system relevant institutions and companies is also creating new challenges and potential threats. Companies classified as critical infrastructure, 
+for example water supply facilities, power plants and their corresponding distribution systems, can constitute an attractive target for cyber attacks, 
+which could disrupt the supply of basic resources to entire countries. As a result, laws such as the Network and Information Security Act (NIS-2) 
+\cite{NIS-2:2022} of the European Union or the IT Act 2.0 \cite{IT-Gesetz_2:2021} enforced by the German Federal Office for Information Security (BSI) 
+demand a unified level of cybersecurity for these entities. In these regulations, the councils prescribe that the companies must adhere to information 
+security standards, which mandate the current requirements for secure communication and cryptography \cite[p. 9]{BSI-ISMS:2017}. Furthermore, the 
+extension of the IT Act 2.0 dictates that these companies are obliged to provide proof of compliance with the security requirements over a two-year 
+period \cite[§11 (1e)]{IT-Gesetz_2:2021}. This decision is intended to ensure the future operability of the security systems with respect to adapting 
+changes of the latest technologies. 
 
 \smallskip
 The main objectives of these security standards are the assurance of the security goals authenticity, integrity and confidentiality for applications in 
@@ -88,8 +90,8 @@ provides a general overview of the IEC 61850 communication standard and the asso
 presents the current state of message security mandated by the IEC 62351 security standard. Following this, a brief introduction into the MACsec security 
 standard is provided, which presents the relevant features used in the implementation later on. Chapter \ref{chapter:relatedWork} displays relevant 
 information presented by related work assessing the current state of technology in this topic. In the further course of the paper, Chapter 
-\ref{chapter:implementation} explains the test setup used to measure the efficiency of the MACsec-based security system. Lastly, the data gathered from 
-this is then evaluated in chapter \ref{chapter:evaluation} and is placed in the context of the mandated security requirements. 
+\ref{chapter:implementation} explains the test setup used to measure the efficiency of the MACsec-based security system. In chapter \ref{chapter:evaluation} 
+the data gathered is evaluated and placed in the context of the mandated security requirements. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Fundamentals         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Background}
@@ -131,7 +133,7 @@ model through multicast Ethernet packets in the LAN \cite{GOOSE_confidentiality_
 The devices located in the \textit{Station Level} of the architecture are responsible for controlling the SAS. This is achieved through MMS packets addressed 
 to specific IEDs and the presentation of the processed information in graphical illustrations to the user \cite{SGRWin_IEC61850Architecture:2021}. 
 For this, the Station Level components typically consist of a Supervisory Control and Data Acquisition (SCADA) component and a Human-Machine-Interface 
-(HMI). Lastly, as displayed in Figure \ref{image:IEC61850Architecture}, it is possible to transmit GOOSE messages to the Station Level components. 
+(HMI). As displayed in Figure \ref{image:IEC61850Architecture}, it is possible to transmit GOOSE messages to the Station Level components. 
 For this, the IEC 61850-90-5 standard \cite{IEC61850-90-5:2012} defines a routable version of the layer two GOOSE frame. For this purpose, the GOOSE 
 packets are extended by adding network and transport layer headers to form a UDP packet, which can be routed through multiple hops in a Wide Area Network (WAN) 
 \cite{routable_GOOSE_SV:2020}.
@@ -263,7 +265,7 @@ hardware platform and results in precise time measurement across several communi
 \smallskip 
 The remainder of this chapter proceeds as follows: Chapter \ref{subchapter:TestEnvironmentStructure} initially explains the overall structure of the 
 test environment. Chapter \ref{subchapter:TestEnvironmentMACsec} describes the optionally activatable MACsec configuration and the corresponding entities 
-of the security standard. Lastly, Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions and the transmission time measurement. 
+of the security standard. Chapter \ref{subchapter:TestProcedures} elaborates on the subsequent test executions and the transmission time measurement. 
 
 \subsection{Structure of the Test Environment}
 \label{subchapter:TestEnvironmentStructure}
@@ -410,8 +412,9 @@ TLS provides the protection from a gateway component to external communication p
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       Acknowledgments       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Acknowledgments}
-The presented work is part of the research project \emph{KRITIS Scalable Safe and Secure Modules} (KRITIS³M), which is funded by the Project Management 
-Jülich (PtJ) and the German Federal Ministry for Economic Affairs and Climate Action (BMWK) under funding code 03EI6089A.
+\noindent The presented work is part of the research project \emph{KRITIS Scalable Safe and Secure Modules} (KRITIS³M), which is funded by the Project 
+Management Jülich (PtJ) and the German Federal Ministry for Economic Affairs and Climate Action (BMWK) under funding code 03EI6089A. Special thanks to 
+Tobias Frauenschlaeger, Franziska Rasp and Peter Heller for their constructive feedback during the development of this paper.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     Begin of References      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \printbibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
