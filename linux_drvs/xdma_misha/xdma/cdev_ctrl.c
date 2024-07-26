@@ -193,10 +193,11 @@ int bridge_mmap(struct file *file, struct vm_area_struct *vma)
 {
 	struct xdma_dev *xdev;
 	struct xdma_cdev *xcdev = (struct xdma_cdev *)file->private_data;
-	unsigned long off;
-	unsigned long phys;
-	unsigned long vsize;
-	unsigned long psize;
+	
+	uint64_t off;// LVB 21/2/2021: must be 64 bit
+	uint64_t phys;// LVB 21/2/2021: must be 64 bit
+	uint64_t vsize;// LVB 21/2/2021: must be 64 bit
+	uint64_t psize;// LVB 21/2/2021: must be 64 bit
 	int rv;
 
 	rv = xcdev_check(__func__, xcdev, 0);
