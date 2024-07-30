@@ -34,35 +34,72 @@
 #define SIZE_DEFAULT (32)
 #define COUNT_DEFAULT (1)
 
-int verify_prameters(char *devname, int fpga_fd, char *infname, int infile_fd,
-		     char *ofname, int outfile_fd)
+void print_transmission_info(int underflow, long total_time, uint64_t count,
+			     uint64_t size, char *devname)
 {
-	if(fpga_fd < 0) 
-    {
-		fprintf(stderr, "unable to open device %s, %d.\n", devname, fpga_fd);
+	if (!underflow) {
+		float avg_time = (float)total_time / (float)count;
+		float result = ((float)size) * 1000 / avg_time;
+		if (verbose)
+			printf("** Avg time device %s, total time %ld nsec, avg_time = %f, size = %lu, BW = %f \n",
+			       devname, total_time, avg_time, size, result);
+		printf("%s ** Average BW = %lu, %f\n", devname, size, result);
+	}
+}
+
+size_t initialize_memBuffer(uint64_t size, uint64_t offset, ssize_t rc,
+			    int infile_fd, char *infname, char *buffer,
+			    char *allocated)
+{
+	posix_memalign((void **)&allocated, 4096 /*alignment */, size + 4096);
+	if (!allocated) {
+		fprintf(stderr, "OOM %lu.\n", size + 4096);
+		rc = -ENOMEM;
+		return -1;
+	}
+
+	buffer = allocated + offset;
+	if (verbose)
+		fprintf(stdout, "host buffer 0x%lx = %p\n", size + 4096,
+			buffer);
+
+	if (infile_fd >= 0) {
+		rc = read_to_buffer(infname, infile_fd, buffer, size, 0);
+		if ((rc < 0) || ((uint32_t) rc < size))
+			return -2;
+	}
+
+	return 0;
+}
+
+size_t verify_prameters(char *devname, int fpga_fd, char *infname,
+			int infile_fd, char *ofname, int outfile_fd)
+{
+	if (fpga_fd < 0) {
+		fprintf(stderr, "unable to open device %s, %d.\n", devname,
+			fpga_fd);
 		perror("open device");
 		return -1;
 	}
 
-	if(infname) 
-    {
+	if (infname) {
 		infile_fd = open(infname, O_RDONLY);
-	
-    	if(infile_fd < 0) 
-        {
-			fprintf(stderr, "unable to open input file %s, %d.\n", infname, infile_fd);
+
+		if (infile_fd < 0) {
+			fprintf(stderr, "unable to open input file %s, %d.\n",
+				infname, infile_fd);
 			perror("open input file");
 			return -2;
 		}
 	}
 
-	if(ofname) 
-    {
-		outfile_fd = open(ofname, O_RDWR | O_CREAT | O_TRUNC | O_SYNC, 0666);
-	
-    	if(outfile_fd < 0) 
-        {
-			fprintf(stderr, "unable to open output file %s, %d.\n", ofname, outfile_fd);
+	if (ofname) {
+		outfile_fd =
+			open(ofname, O_RDWR | O_CREAT | O_TRUNC | O_SYNC, 0666);
+
+		if (outfile_fd < 0) {
+			fprintf(stderr, "unable to open output file %s, %d.\n",
+				ofname, outfile_fd);
 			perror("open output file");
 			return -3;
 		}
@@ -73,31 +110,20 @@ int verify_prameters(char *devname, int fpga_fd, char *infname, int infile_fd,
 
 int main()
 {
-    /*Pervious transfer parameter*/
-    char *devname = DEVICE_NAME_DEFAULT; 
-    uint64_t addr = 0; 
-    uint64_t aperture = 0; 
-    uint64_t size = SIZE_DEFAULT;
-    uint64_t offset = 0; 
-    uint64_t count = COUNT_DEFAULT; 
-    char *infname = DATA_FILE_PATH; 
-    char *ofname = NULL;
+	/*Pervious transfer parameter*/
+	char *devname = DEVICE_NAME_DEFAULT;
+	uint64_t addr = 0;
+	uint64_t size = SIZE_DEFAULT;
+	uint64_t offset = 0;
+	uint64_t count = COUNT_DEFAULT;
+	char *infname = DATA_FILE_PATH;
+	char *ofname = NULL;
 
-    /* Original parameter */
+	/* Original parameter */
 	uint64_t i;
-	ssize_t rc;
+	ssize_t rc = 0;
 	size_t bytes_done = 0;
 	size_t out_offset = 0;
-	
-    uint64_t apt_loop;
-    if(aperture != 0)
-    {
-        apt_loop = (size + aperture - 1) / aperture;
-    }
-    else
-    {
-        apt_loop = 0;
-    }
 
 	char *buffer = NULL;
 	char *allocated = NULL;
@@ -106,100 +132,51 @@ int main()
 	int outfile_fd = -1;
 	int fpga_fd = open(devname, O_RDWR);
 	long total_time = 0;
-	float result;
-	float avg_time = 0;
 	int underflow = 0;
 
-	if (verify_prameters(devname, fpga_fd, infname, infile_fd, ofname, outfile_fd) < 0) return -1;
+	if (verify_prameters(devname, fpga_fd, infname, infile_fd, ofname,
+			     outfile_fd) != 0)
+		return -1;
 
-	posix_memalign((void **)&allocated, 4096 /*alignment */, size + 4096);
-	if(!allocated) 
-    {
-		fprintf(stderr, "OOM %lu.\n", size + 4096);
-		rc = -ENOMEM;
-		goto out;
-	}
+	if (initialize_memBuffer(size, offset, rc, infile_fd, infname, buffer,
+				 allocated) != 0)
+		return -2;
 
-	buffer = allocated + offset;
-	if(verbose) fprintf(stdout, "host buffer 0x%lx = %p\n", size + 4096, buffer);
-
-	if (infile_fd >= 0) 
-    {
-		rc = read_to_buffer(infname, infile_fd, buffer, size, 0);
-		if (rc < 0 || rc < size)
-			goto out;
-	}
-
-	for (i = 0; i < count; i++) 
-    {
+	for (i = 0; i < count; i++) {
 		/* write buffer to AXI MM address using SGDMA */
 		rc = clock_gettime(CLOCK_MONOTONIC, &ts_start);
 
-		if (apt_loop) 
-        {
-			uint64_t j;
-			uint64_t len = size;
-			char *buf = buffer;
+		rc = write_from_buffer(devname, fpga_fd, buffer, size, addr);
+		if (rc < 0)
+			goto out;
 
-			bytes_done = 0;
-			for (j = 0; j < apt_loop; j++, len -= aperture, buf += aperture) 
-            {
-				uint64_t bytes;
-                if(len > aperture)
-                {
-                    bytes = aperture;
-                }
-                else
-                {
-                    bytes = len;
-                }
-				
-                rc = write_from_buffer(devname, fpga_fd, buf, bytes, addr);
-
-				if(rc < 0)
-					goto out;
-
-				bytes_done += rc;
-				if(!underflow && rc < bytes) 
-                    underflow = 1;
-			}
-		} 
-        else 
-        {
-			rc = write_from_buffer(devname, fpga_fd, buffer, size, addr);
-			if (rc < 0)
-				goto out;
-
-			bytes_done = rc;
-			if (!underflow && bytes_done < size)
-				underflow = 1;
-		}
+		bytes_done = rc;
+		if (!underflow && bytes_done < size)
+			underflow = 1;
 
 		rc = clock_gettime(CLOCK_MONOTONIC, &ts_end);
+
 		/* subtract the start time from the end time */
 		timespec_sub(&ts_end, &ts_start);
 		total_time += ts_end.tv_nsec;
-		/* a bit less accurate but side-effects are accounted for */
 
-		if (verbose) fprintf(stdout, "#%lu: CLOCK_MONOTONIC %ld.%09ld sec. write %ld bytes\n", i, ts_end.tv_sec, ts_end.tv_nsec, size);
+		/* a bit less accurate but side-effects are accounted for */
+		if (verbose)
+			fprintf(stdout,
+				"#%lu: CLOCK_MONOTONIC %ld.%09ld sec. write %ld bytes\n",
+				i, ts_end.tv_sec, ts_end.tv_nsec, size);
 
 		if (outfile_fd >= 0) {
-			rc = write_from_buffer(ofname, outfile_fd, buffer, bytes_done, out_offset);
-			
-            if (rc < 0 || rc < bytes_done)
+			rc = write_from_buffer(ofname, outfile_fd, buffer,
+					       bytes_done, out_offset);
+
+			if (rc < 0 || ((size_t) rc < bytes_done))
 				goto out;
 			out_offset += bytes_done;
 		}
 	}
 
-	if(!underflow) 
-    {
-		avg_time = (float)total_time / (float)count;
-		result = ((float)size) * 1000 / avg_time;
-		if (verbose) printf("** Avg time device %s, total time %ld nsec, avg_time = %f, size = %lu, BW = %f \n",
-			                devname, total_time, avg_time, size, result);
-		printf("%s ** Average BW = %lu, %f\n", devname, size, result);
-	}
+	print_transmission_info(underflow, total_time, count, size, devname);
 
 out:
 	close(fpga_fd);

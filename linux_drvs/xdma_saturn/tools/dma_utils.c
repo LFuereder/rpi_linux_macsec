@@ -75,7 +75,7 @@ ssize_t read_to_buffer(char *fname, int fd, char *buffer, uint64_t size,
 		}
 
 		count += rc;
-		if (rc != bytes) {
+		if ((rc < 0) || ((uint64_t) rc != bytes)) {
 			fprintf(stderr, "%s, read underflow 0x%lx/0x%lx @ 0x%lx.\n",
 				fname, rc, bytes, offset);
 			break;
@@ -127,7 +127,8 @@ ssize_t write_from_buffer(char *fname, int fd, char *buffer, uint64_t size,
 		}
 
 		count += rc;
-		if (rc != bytes) {
+		if ((rc < 0) || ((uint64_t) rc != bytes)) 
+		{
 			fprintf(stderr, "%s, write underflow 0x%lx/0x%lx @ 0x%lx.\n",
 				fname, rc, bytes, offset);
 			break;

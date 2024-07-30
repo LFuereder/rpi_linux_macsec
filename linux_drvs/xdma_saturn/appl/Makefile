@@ -34,4 +34,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 clean:
 	rm -rf $(BUILDDIR) $(TARGET)
 
-.PHONY: all clean
+.PHONY: all clean new
+
+new: clean all
+
