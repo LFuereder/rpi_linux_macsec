@@ -29,7 +29,7 @@
 
 #include "../../tools/dma_utils.c"
 
-#define DATA_FILE_PATH "../data/datafile_4k.bin"
+#define DATA_FILE_PATH "data/datafile_4k.bin"
 #define DEVICE_NAME_DEFAULT "/dev/xdma0_h2c_0"
 #define SIZE_DEFAULT (32)
 #define COUNT_DEFAULT (1)
