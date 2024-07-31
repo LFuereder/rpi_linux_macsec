@@ -118,6 +118,7 @@ int dma_writejob(char *devname, uint64_t addr, uint64_t size, uint64_t offset, u
 		/* subtract the start time from the end time */
 		timespec_sub(&ts_end, &ts_start);
 		total_time += ts_end.tv_nsec;
+		
 		/* a bit less accurate but side-effects are accounted for */
 		if (verbose)
 		fprintf(stdout,
@@ -133,7 +134,8 @@ int dma_writejob(char *devname, uint64_t addr, uint64_t size, uint64_t offset, u
 		}
 	}
 
-	if (!underflow) {
+	if (!underflow) 
+	{
 		avg_time = (float)total_time/(float)count;
 		result = ((float)size)*1000/avg_time;
 		if (verbose)
@@ -156,6 +158,34 @@ out:
 	return underflow ? -EIO : 0;
 }
 
+void write_to_binary_data(char* infname)
+{
+
+	unsigned char buffer[128] = 
+	{
+		0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x11, 0x22, 0x33, 
+		0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x44, 0x55, 0x66,
+		0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x77, 0x88, 0x99,
+		0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0xAA, 0xBB, 0xCC,
+
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12,
+		0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x23,
+		0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x34,
+
+		0xBA, 0xD0, 0xC0, 0xDE, 0x00, 0x11, 0x22, 0x33, 
+		0xBA, 0xD0, 0xC0, 0xDE, 0x00, 0x44, 0x55, 0x66,
+		0xBA, 0xD0, 0xC0, 0xDE, 0x00, 0x77, 0x88, 0x99,
+		0xBA, 0xD0, 0xC0, 0xDE, 0x00, 0xAA, 0xBB, 0xCC,
+	};
+
+	FILE* write_ptr = fopen(infname,"wb");  // w for write, b for binary
+
+	fwrite(buffer,sizeof(buffer),1,write_ptr); // write 128 bytes from our buffer
+
+	fclose(write_ptr);
+}
+
 int main()
 {
 	char *device = DEVICE_NAME_DEFAULT;
@@ -166,13 +196,13 @@ int main()
 	char *infname = DATA_PATH_DEFAULT;
 	char *ofname = NULL;
 
-	if (verbose)
-	{		
-		fprintf(stdout, "dev %s, addr 0x%lx, size 0x%lx, offset 0x%lx, "
-						"count %lu\n", device, address, size, offset, count);
-	}
+	write_to_binary_data(infname);
 
-	int rc = dma_writejob(device, address, size, offset, count, infname, ofname);
 
-	return rc;
+	fprintf(stdout, "dev %s, addr 0x%lx, size 0x%lx, offset 0x%lx, "
+					"count %lu\n", device, address, size, offset, count);
+
+	//int rc = dma_writejob(device, address, size, offset, count, infname, ofname);
+
+	return 00;
 }
