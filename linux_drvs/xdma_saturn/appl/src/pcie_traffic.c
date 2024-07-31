@@ -47,30 +47,30 @@ void print_transmission_info(int underflow, long total_time, uint64_t count,
 	}
 }
 
-size_t initialize_memBuffer(uint64_t size, uint64_t offset, ssize_t rc,
-			    int infile_fd, char *infname, char *buffer,
-			    char *allocated)
-{
-	posix_memalign((void **)&allocated, 4096 /*alignment */, size + 4096);
-	if (!allocated) {
-		fprintf(stderr, "OOM %lu.\n", size + 4096);
-		rc = -ENOMEM;
-		return -1;
-	}
+// size_t initialize_memBuffer(uint64_t size, uint64_t offset, ssize_t rc,
+// 			    int infile_fd, char *infname, char *buffer,
+// 			    char *allocated)
+// {
+// 	posix_memalign((void **)&allocated, 4096 /*alignment */, size + 4096);
+// 	if (!allocated) {
+// 		fprintf(stderr, "OOM %lu.\n", size + 4096);
+// 		rc = -ENOMEM;
+// 		return -1;
+// 	}
 
-	buffer = allocated + offset;
-	if (verbose)
-		fprintf(stdout, "host buffer 0x%lx = %p\n", size + 4096,
-			buffer);
+// 	buffer = allocated + offset;
+// 	if (verbose)
+// 		fprintf(stdout, "host buffer 0x%lx = %p\n", size + 4096,
+// 			buffer);
 
-	if (infile_fd >= 0) {
-		rc = read_to_buffer(infname, infile_fd, buffer, size, 0);
-		if ((rc < 0) || ((uint32_t) rc < size))
-			return -2;
-	}
+// 	if (infile_fd >= 0) {
+// 		rc = read_to_buffer(infname, infile_fd, buffer, size, 0);
+// 		if ((rc < 0) || ((uint32_t) rc < size))
+// 			return -2;
+// 	}
 
-	return 0;
-}
+// 	return 0;
+// }
 
 size_t verify_prameters(char *devname, int fpga_fd, char *infname,
 			int infile_fd, char *ofname, int outfile_fd)
@@ -138,9 +138,27 @@ int main()
 			     outfile_fd) != 0)
 		return -1;
 
-	if (initialize_memBuffer(size, offset, rc, infile_fd, infname, buffer,
-				 allocated) != 0)
-		return -2;
+	// if (initialize_memBuffer(size, offset, rc, infile_fd, infname, buffer,
+	// 			 allocated) != 0)
+	// 	return -2;
+
+	posix_memalign((void **)&allocated, 4096 /*alignment */, size + 4096);
+	if (!allocated) {
+		fprintf(stderr, "OOM %lu.\n", size + 4096);
+		rc = -ENOMEM;
+		return -1;
+	}
+
+	buffer = allocated + offset;
+	if (verbose)
+		fprintf(stdout, "host buffer 0x%lx = %p\n", size + 4096,
+			buffer);
+
+	if (infile_fd >= 0) {
+		rc = read_to_buffer(infname, infile_fd, buffer, size, 0);
+		if ((rc < 0) || ((uint32_t) rc < size))
+			return -2;
+	}
 
 	for (i = 0; i < count; i++) {
 		/* write buffer to AXI MM address using SGDMA */
