@@ -178,24 +178,25 @@ static int dma_readjob(char *devname, uint64_t addr,
 	float avg_time = 0;
 	int underflow = 0;
 
-	if (fpga_fd < 0) {
-                fprintf(stderr, "unable to open device %s, %d.\n",
-                        devname, fpga_fd);
+	if (fpga_fd < 0) 
+	{
+        fprintf(stderr, "unable to open device %s, %d.\n", devname, fpga_fd);
 		perror("open device");
-                return -EINVAL;
-        }
+        return -EINVAL;
+    }
 
 	/* create file to write data to */
-	if (ofname) {
-		out_fd = open(ofname, O_RDWR | O_CREAT | O_TRUNC | O_SYNC,
-				0666);
-		if (out_fd < 0) {
-                        fprintf(stderr, "unable to open output file %s, %d.\n",
-                                ofname, out_fd);
+	if (ofname) 
+	{
+		out_fd = open(ofname, O_RDWR | O_CREAT | O_TRUNC | O_SYNC, 0666);
+		
+		if (out_fd < 0) 
+		{
+            fprintf(stderr, "unable to open output file %s, %d.\n", ofname, out_fd);
 			perror("open output file");
-                        rc = -EINVAL;
-                        goto out;
-                }
+            rc = -EINVAL;
+            goto out;
+        }
 	}
 
 	posix_memalign((void **)&allocated, 4096 /*alignment */ , size + 4096);
@@ -206,8 +207,8 @@ static int dma_readjob(char *devname, uint64_t addr,
 	}
 
 	buffer = allocated + offset;
-	if (verbose)
-	fprintf(stdout, "host buffer 0x%lx, %p.\n", size + 4096, buffer);
+
+	if (verbose) fprintf(stdout, "host buffer 0x%lx, %p.\n", size + 4096, buffer);
 
 	for (i = 0; i < count; i++) 
 	{
@@ -215,6 +216,7 @@ static int dma_readjob(char *devname, uint64_t addr,
 		rc = read_to_buffer(devname, fpga_fd, buffer, size, addr);
 		if (rc < 0)
 			goto out;
+		
 		bytes_done = rc;
 
 		if (!underflow && bytes_done < size)
@@ -222,32 +224,32 @@ static int dma_readjob(char *devname, uint64_t addr,
 		
 		clock_gettime(CLOCK_MONOTONIC, &ts_end);
 
-
 		/* subtract the start time from the end time */
 		timespec_sub(&ts_end, &ts_start);
 		total_time += ts_end.tv_nsec;
 		/* a bit less accurate but side-effects are accounted for */
-		if (verbose)
-		fprintf(stdout,
-			"#%lu: CLOCK_MONOTONIC %ld.%09ld sec. read %ld/%ld bytes\n",
-			i, ts_end.tv_sec, ts_end.tv_nsec, bytes_done, size);
+		if (verbose) fprintf(stdout, "#%lu: CLOCK_MONOTONIC %ld.%09ld sec. read %ld/%ld bytes\n",
+								  i, ts_end.tv_sec, ts_end.tv_nsec, bytes_done, size);
 
 		/* file argument given? */
-		if (out_fd >= 0) {
-			rc = write_from_buffer(ofname, out_fd, buffer,
-					 bytes_done, out_offset);
+		if (out_fd >= 0) 
+		{
+			rc = write_from_buffer(ofname, out_fd, buffer, bytes_done, out_offset);
+
 			if ((rc < 0) || ((size_t) rc < bytes_done))
 				goto out;
+			
 			out_offset += bytes_done;
 		}
 	}
 
-	if (!underflow) {
+	if (!underflow) 
+	{
 		avg_time = (float)total_time/(float)count;
 		result = ((float)size)*1000/avg_time;
-		if (verbose)
-			printf("** Avg time device %s, total time %ld nsec, avg_time = %f, size = %lu, BW = %f \n",
-				devname, total_time, avg_time, size, result);
+		if (verbose) printf("** Avg time device %s, total time %ld nsec, avg_time = %f, size = %lu, BW = %f \n",
+								devname, total_time, avg_time, size, result);
+		
 		printf("%s ** Average BW = %lu, %f\n", devname, size, result);
 		rc = 0;
 	} else 
@@ -308,7 +310,7 @@ int main()
 	fprintf(stdout, "dev %s, addr 0x%lx, size 0x%lx, offset 0x%lx, "
 					"count %lu\n", device, address, size, offset, count);
 
-	rc = dma_writejob(device, address, size, offset, count, infname, ofname);
+	//rc = dma_writejob(device, address, size, offset, count, infname, ofname);
 
 	rc = dma_readjob(device, address, size, offset, count, ofname);
 
