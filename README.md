@@ -4,9 +4,8 @@ Raspberry Pi Linux MACsec
 This fork of the Raspberry Pi Linux Kernel 6.6.25 aims to implement a hardware accelerated MACsec kernel module for use in a Raspberry Pi 5 and a Zynq UltraScale+ MPSoC ZCU106. The current state of implementation contains a patched version of the Xilinx direct memory access driver (XDMA) for arm32 and arm64 implemented by [Laurence Barker](https://github.com/laurencebarker/Saturn/tree/main). In addition to this we integrated the MACsec kernel module implemented by [Sabrina Dubroca](https://man7.org/linux/man-pages/man8/ip-macsec.8.html). 
 
 
-Initial Setup:
+## Initial Setup:
 To setup the MACsec kernel module in Raspbian, a couple of dependencies need to be configured. The SD-card used to boot the Raspberry Pi needs to contain a version of the OS, which already contains the correct formatting. This can be done using the Raspberry Pi Imager Tool. 
-
 Following this, the development environment needs to be established and a number of development tools need to be installed. This is achieved by executing the following commands:
 
 ```console
