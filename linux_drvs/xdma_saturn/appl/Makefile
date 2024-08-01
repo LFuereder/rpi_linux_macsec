@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -Iinc
+CFLAGS = -Wall -Wextra -Iinc -g -O0
 
 # Directories
 SRCDIR = src
