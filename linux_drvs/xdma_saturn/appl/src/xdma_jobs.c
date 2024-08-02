@@ -241,7 +241,7 @@ int dma_readjob(char *devname, uint64_t addr, uint64_t size, uint64_t offset, ui
         {
 			rc = write_from_buffer(ofname, out_fd, buffer, bytes_done, out_offset);
 			
-            if (rc < 0 || rc < bytes_done)
+            if ((rc < 0) || ((size_t) rc < bytes_done))
 				goto out;
 			
             out_offset += bytes_done;
@@ -312,8 +312,8 @@ int main()
 	write_to_binary_data(infname);
 
 
-	fprintf(stdout, "dev %s, addr 0x%lx, size 0x%lx, offset 0x%lx, "
-					"count %lu\n", WRITE_DEVICE_DEFAULT, address, (uint64_t) SIZE_DEFAULT, offset, (uint64_t) COUNT_DEFAULT);
+	fprintf(stdout, "dev %s, addr 0x%lx, size 0x%lx, offset 0x%lx, count %lu\n", 
+			WRITE_DEVICE_DEFAULT, address, (uint64_t) SIZE_DEFAULT, offset, (uint64_t) COUNT_DEFAULT);
 
 	rc = dma_writejob(WRITE_DEVICE_DEFAULT, address, SIZE_DEFAULT, offset, COUNT_DEFAULT, infname, ofname);
 
