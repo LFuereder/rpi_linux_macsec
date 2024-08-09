@@ -1,130 +1,77 @@
 #include <linux/module.h>
-#include <linux/pci.h>
+#include <linux/init.h>
+#include <linux/jiffies.h>
+#include <linux/timer.h>
+#include <linux/fs.h>
 
-#define PCI_TEST_VENDOR_ID 0x10ee
-#define PCI_TEST_DEVICE_ID 0x7021
-#define PCI_TEST_DEVICE_MEMOFFSET 0x0000
-
-void __iomem *ptr_mem;
-
-int mem_id = 1;
-
-/* Meta Inforamtion */
+/* Meta Information */
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Lukas Fuereder");
-MODULE_DESCRIPTION("Test application of the pci driver integration");
+MODULE_DESCRIPTION(
+	"Generic Test Driver, if probed accesses the gpio_driver and modifies its current entry.");
 
+/** Variable Declarations */
+static struct timer_list my_timer;
+char my_gpio_state;
 
-/* List of allowed devices */
-static struct pci_device_id pci_test_driver_ids[] = {
-    { PCI_DEVICE(PCI_TEST_VENDOR_ID, PCI_TEST_DEVICE_ID)},
-    { }
-};
-
-MODULE_DEVICE_TABLE(pci, pci_test_driver_ids);
-
-
-static void gather_device_info(struct pci_dev *dev)
+/**
+ * @brief Callback function of the Timer.
+ */
+void timer_callback(struct timer_list *data)
 {
-    /* Gather information about memory space on device */
-    int status = pci_resource_len(dev, mem_id);
-    printk("---------------------------------------------------\n");
-    printk("[ INFO ]   pci_test_driver MEM is %d bytes\n", status);
-    printk("[ INFO ]   pci_test_driver MEM is mapped to 0x%llx\n", pci_resource_start(dev, mem_id));
-    printk("[ INFO ]   pci_test_driver MEM Offset: 0x%X\n", PCI_TEST_DEVICE_MEMOFFSET);
-    printk("---------------------------------------------------\n");
+	struct file *file;
+	ssize_t len;
+
+	/* Open the file */
+	file = filp_open("/dev/my_gpio_driver", O_RDWR, 0);
+	if (!file) {
+		printk("file_access - Error opening file\n");
+		return;
+	}
+
+	/* Write to the file */
+	len = kernel_write(file, &my_gpio_state, sizeof(my_gpio_state), &file->f_pos);
+	if (len < 0) {
+		printk("file_access - Error writing to file: %ld\n", len);
+        goto FileError;
+	}
+
+	switch (my_gpio_state) {
+	case 0:
+		my_gpio_state = 1;
+		break;
+
+	case 1:
+		my_gpio_state = 0;
+		break;
+
+	default:
+		my_gpio_state = 0;
+		break;
+	}
+
+FileError:
+   	filp_close(file, NULL);
 }
 
-static int access_pci_mem(struct pci_dev *dev)
+/**
+ * @brief This function is called, when the module is loaded into the kernel
+ */
+static int __init my_init(void)
 {
-    ptr_mem = NULL;
+    /* Initialize timer */
+    timer_setup(&my_timer, timer_callback, 0);
+    mod_timer(&my_timer, jiffies + msecs_to_jiffies(1000));
 
-    int status = pcim_iomap_regions(dev, BIT(mem_id), KBUILD_MODNAME);
-    if( status < 0)
-    {
-        printk("[ ERROR ]   Could not enable pci mem_%d\n", mem_id);
-        return status;
-    }
-
-    printk("[ INFO ]   Successfully enabled pci mem_%d\n", mem_id);
-
-
-    ptr_mem = pcim_iomap_table(dev)[mem_id];
-    if(ptr_mem == NULL)
-    {
-        printk("[ ERROR ]   Invalid pointer for mem_%d\n", mem_id);
-        return -1;
-    }
-
-    printk("[ INFO ]   Value of ptr_mem0: 0x%p\n", ptr_mem);
-
-    printk("[ TEST ]   pci mem_%d original value: 0x%x\n", mem_id, ioread32(ptr_mem + PCI_TEST_DEVICE_MEMOFFSET));
-
-    if(PCI_TEST_DEVICE_MEMOFFSET == 0)
-    {
-        iowrite8(0xB, ptr_mem + PCI_TEST_DEVICE_MEMOFFSET);
-    } else if(PCI_TEST_DEVICE_MEMOFFSET == 0x4000)
-    {
-        iowrite8(0xC, ptr_mem + PCI_TEST_DEVICE_MEMOFFSET);
-    }
-
-
-    printk("[ TEST ]   pci mem_%d new value: 0x%x\n", mem_id, ioread32(ptr_mem + PCI_TEST_DEVICE_MEMOFFSET));
-
-    return 0;
+	return 0;
 }
 
-/* The following function is called, if a device is registered */
-static int pci_test_device_probe(struct pci_dev *dev, const struct pci_device_id *id)
+/**
+ * @brief This function is called, when the module is removed from the kernel
+ */
+static void __exit my_exit(void)
 {
-    int status;
-
-    printk("[ INFO ]   pci_test_driver currently in the probe step\n");
-    gather_device_info(dev);
-
-    /* Enable device */
-    status = pcim_enable_device(dev);
-    if(status < 0)
-    {
-        printk("[ ERROR ]   Could not enable pci_test_driver\n");
-        return status;
-    }
-    
-    access_pci_mem(dev);
-
-    return 0;
-}
-
-
-/* The following function is called, if a device is unregistered */
-static void pci_test_device_remove(struct pci_dev *dev)
-{
-    printk("[ INFO ]   pci_test_driver currently in the remove step\n");
-    iowrite8(0x0, ptr_mem + PCI_TEST_DEVICE_MEMOFFSET);
-    printk("=======================================================\n");
-    printk("=======================================================\n");
-    return;
-}
-
-
-/* PCI driver struct */
-static struct pci_driver pci_test_driver = {
-    .name = "pci_test_driver",
-    .id_table = pci_test_driver_ids,
-    .probe = pci_test_device_probe,
-    .remove = pci_test_device_remove,
-};
-
-/* Init function of the driver */
-static int __init my_init(void) {
-    printk("[ INFO ]   pci_test_driver - Registering the PCI device\n");
-    return pci_register_driver(&pci_test_driver);
-}
-
-/* Exit function of the driver */
-static void __exit my_exit(void) {
-    printk("[ INFO ]   pci_test_driver - Unregistering the PCI device\n");
-    pci_unregister_driver(&pci_test_driver);
+	printk("file_access - Unloading driver\n");
 }
 
 module_init(my_init);
