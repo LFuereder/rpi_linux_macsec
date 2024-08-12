@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -Iinc -g -O0
 SRCDIR = src
 INCDIR = inc
 BUILDDIR = build
-TARGET = $(BUILDDIR)/xdma_jobs
+TARGET = $(BUILDDIR)/user_test
 
 # Find all the source and header files
 SRCS = $(wildcard $(SRCDIR)/*.c)
