@@ -1,4 +1,5 @@
 obj-m += driver-test.o
+obj-m += gpio_driver.o
 
 KDIR = ../../rootfs/lib/modules/6.6.25-v8-16k+/build
 
