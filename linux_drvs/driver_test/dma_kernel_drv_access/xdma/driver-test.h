@@ -8,6 +8,6 @@
 #include <linux/file.h>
 #include <linux/export.h>
 
-extern void driver_toggle_gpio(void);
+extern ssize_t char_sgdma_drv_access_write(void);
 
 #endif

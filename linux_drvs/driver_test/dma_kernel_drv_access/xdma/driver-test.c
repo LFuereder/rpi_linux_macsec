@@ -1,5 +1,5 @@
 #include "driver-test.h"
-#include "gpio_driver.h"
+#include "cdev_sgdma.h"
 
 /* Meta Information */
 MODULE_LICENSE("GPL");
@@ -12,7 +12,7 @@ MODULE_DESCRIPTION("Generic Test Driver, if probed accesses the gpio_driver and 
 static int __init my_init(void)
 {
 	printk("file_access - Loading driver\n");
-	driver_toggle_gpio();
+	char_sgdma_drv_access_write();
 	
 	return 0;
 }
@@ -23,7 +23,6 @@ static int __init my_init(void)
 static void __exit my_exit(void)
 {
 	printk("file_access - Unloading driver\n");
-	driver_toggle_gpio();
 }
 
 module_init(my_init);

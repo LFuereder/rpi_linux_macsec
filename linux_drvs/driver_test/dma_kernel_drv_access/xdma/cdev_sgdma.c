@@ -355,7 +355,7 @@ err_out:
 
 static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 		size_t count, loff_t *pos, bool write)
-{
+{	
 	int rv;
 	ssize_t res = 0;
 	struct xdma_cdev *xcdev = (struct xdma_cdev *)file->private_data;
@@ -404,12 +404,39 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 	return res;
 }
 
-
 static ssize_t char_sgdma_write(struct file *file, const char __user *buf,
 		size_t count, loff_t *pos)
 {
 	return char_sgdma_read_write(file, buf, count, pos, 1);
 }
+
+ssize_t char_sgdma_drv_access_write(void)
+{
+	printk(KERN_INFO "xdma driver now in sgdma write function (drv access)\n");
+
+	/* find matching file struct */
+	struct file *filp;
+	filp = filp_open("/dev/xdma_h2c_0", O_RDWR, 0);
+	if(IS_ERR(filp))
+	{
+		printk(KERN_ERR "Failed to open device driver file\n");
+		goto FILP_ERROR;
+	}
+
+	printk(KERN_INFO "File opened, associated f_op: %p\n", filp->f_op);
+
+	ssize_t rv = 0;
+	//ssize_t rv = char_sgdma_read_write(filp, buf, count, pos, 1);
+
+	filp_close(filp, NULL);
+
+	return rv;
+
+FILP_ERROR:
+	return -EEXIST;
+}
+
+EXPORT_SYMBOL(char_sgdma_drv_access_write);
 
 static ssize_t char_sgdma_read(struct file *file, char __user *buf,
 				size_t count, loff_t *pos)

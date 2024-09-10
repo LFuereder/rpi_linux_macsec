@@ -69,4 +69,16 @@ struct xdma_performance_ioctl {
 #define IOCTL_XDMA_ADDRMODE_GET _IOR('q', 5, int)
 #define IOCTL_XDMA_ALIGN_GET    _IOR('q', 6, int)
 
+/// @brief drv_access_write represents an interface for access to the xdma pci driver within the linux kernel space.
+///		   This function does not contain any implementation for copy from/to userspace and can therefore not be used 
+///		   in user space applications. For kernel space applications it works identical to the .write callback function 
+///		   of the cdev_ctrl LKM.
+
+/// @param buf pointer to the buffer containing the message, which shall be transmitted (only valid for kernel memory) 
+/// @param count number of bytes, which shall be transmitted
+/// @param pos optional position offset, which can be added on top of the current flash-memory (on the FPGA) position.
+
+/// @return returns the number of transmitted bytes or -EEXIST in case of an error while trying to access the file pointer.
+ssize_t char_sgdma_drv_access_write(void);
+
 #endif /* _XDMA_IOCALLS_POSIX_H_ */
