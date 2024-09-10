@@ -8,6 +8,6 @@
 #include <linux/file.h>
 #include <linux/export.h>
 
-extern void driver_toggle_gpio(void);
+extern void driver_toggle_gpio(char state);
 
 #endif

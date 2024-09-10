@@ -12,7 +12,8 @@ MODULE_DESCRIPTION("Generic Test Driver, if probed accesses the gpio_driver and 
 static int __init my_init(void)
 {
 	printk("file_access - Loading driver\n");
-	driver_toggle_gpio();
+	char state = '1';
+	driver_toggle_gpio(state);
 	
 	return 0;
 }
@@ -23,7 +24,8 @@ static int __init my_init(void)
 static void __exit my_exit(void)
 {
 	printk("file_access - Unloading driver\n");
-	driver_toggle_gpio();
+	char state = '0';
+	driver_toggle_gpio(state);
 }
 
 module_init(my_init);

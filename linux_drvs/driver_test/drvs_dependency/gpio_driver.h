@@ -9,6 +9,6 @@
 #include <linux/gpio.h>
 #include <linux/export.h>
 
-void driver_toggle_gpio(void);
+void driver_toggle_gpio(char state);
 
 #endif

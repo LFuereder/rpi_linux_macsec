@@ -14,7 +14,6 @@ static struct cdev my_device;
 #define DRIVER_CLASS "MyModuleClass"
 
 #define GPIO_PIN 592
-int GPIO_STATE = 0;
 
 /**
  * @brief Read data out of the buffer
@@ -43,22 +42,20 @@ static ssize_t driver_read(struct file *File, char *user_buffer, size_t count, l
  * @brief Writing the value parsed from user space memory onto the gpio register
  * 		  (as long as it is within the valid states)
  * 
- * @param value This value originates in the driver_write callback_function below and is referenced in the function. 
+ * @param state This value originates in the driver_write callback_function below and is referenced in the function. 
  * 
  * @return ssize_t If executed correctly, this function returns 0. In case an invalid value is passed to it, this
  * 				   function returns the error code: -EIO.  
  */
-void driver_toggle_gpio(void)
+void driver_toggle_gpio(char state)
 {
-	switch(GPIO_STATE) {
-		case 0:
-			gpio_set_value(GPIO_PIN, 1);
-			GPIO_STATE = 1;
+	switch(state) {
+		case '0':
+			gpio_set_value(GPIO_PIN, 0);
 			break;
 		
-		case 1:
-			gpio_set_value(GPIO_PIN, 0);
-			GPIO_STATE = 0;
+		case '1':
+			gpio_set_value(GPIO_PIN, 1);
 			break;
 		
 		default:
@@ -72,7 +69,8 @@ EXPORT_SYMBOL(driver_toggle_gpio);
 /**
  * @brief Write data to buffer
  */
-static ssize_t driver_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs) {
+static ssize_t driver_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs) 
+{
 	int to_copy, not_copied, delta;
 	char value;
 
@@ -82,22 +80,8 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
 	/* Copy data to user */
 	not_copied = copy_from_user(&value, user_buffer, to_copy);
 
-	switch (value)
-	{
-	case '1':
-		GPIO_STATE = 0;
-		driver_toggle_gpio();
-		break;
-	
-	case '0':
-		GPIO_STATE = 1;
-		driver_toggle_gpio();
-		break;
-
-	default:
-		printk("Invalid Argument\n");
-		return -EIO;
-	}
+	/* Write copied value to the associated register */
+	driver_toggle_gpio(value);
 
 	/* Calculate data */
 	delta = to_copy - not_copied;
