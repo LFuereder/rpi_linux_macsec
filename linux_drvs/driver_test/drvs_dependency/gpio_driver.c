@@ -42,10 +42,8 @@ static ssize_t driver_read(struct file *File, char *user_buffer, size_t count, l
  * @brief Writing the value parsed from user space memory onto the gpio register
  * 		  (as long as it is within the valid states)
  * 
- * @param state This value originates in the driver_write callback_function below and is referenced in the function. 
- * 
- * @return ssize_t If executed correctly, this function returns 0. In case an invalid value is passed to it, this
- * 				   function returns the error code: -EIO.  
+ * @param state This value originates in the driver_write callback_function below and is referenced in the function.
+ * 				If within the valid states, it is written to the associated register.
  */
 void driver_toggle_gpio(char state)
 {
@@ -65,6 +63,35 @@ void driver_toggle_gpio(char state)
 }
 
 EXPORT_SYMBOL(driver_toggle_gpio);
+
+
+/**
+ * @brief Test function to verify the functionality of opening a file in the /dev folder from within the kernel space.
+ * 
+ * @return ssize_t If executed correctly, this function returns 0. In case the access of the driver is not successful,
+ * 				   the function returns the error code: -EIO.  
+ */
+ssize_t access_from_drv(void)
+{
+	struct file* filp;
+
+	filp = filp_open("/dev/my_gpio_driver", O_RDWR, 0);
+	if(IS_ERR(filp))
+	{
+		printk(KERN_ERR "Failed to open device driver file\n");
+		goto FILP_ERROR;
+	}
+	printk(KERN_INFO "File opened, associated f_op: %p\n", filp->f_op);
+
+	filp_close(filp, NULL);
+
+	return 0;
+
+FILP_ERROR:
+	return -1;
+}
+
+EXPORT_SYMBOL(access_from_drv);
 
 /**
  * @brief Write data to buffer

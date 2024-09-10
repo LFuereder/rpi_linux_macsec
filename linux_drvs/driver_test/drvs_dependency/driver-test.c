@@ -14,6 +14,7 @@ static int __init my_init(void)
 	printk("file_access - Loading driver\n");
 	char state = '1';
 	driver_toggle_gpio(state);
+	access_from_drv();
 	
 	return 0;
 }

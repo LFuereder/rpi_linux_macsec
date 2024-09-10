@@ -9,5 +9,6 @@
 #include <linux/export.h>
 
 extern void driver_toggle_gpio(char state);
+extern ssize_t access_from_drv(void);
 
 #endif

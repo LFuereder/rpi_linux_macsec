@@ -9,6 +9,8 @@
 #include <linux/gpio.h>
 #include <linux/export.h>
 
+/* API to access driver operations within the kernel space */
 void driver_toggle_gpio(char state);
+ssize_t access_from_drv(void);
 
 #endif
