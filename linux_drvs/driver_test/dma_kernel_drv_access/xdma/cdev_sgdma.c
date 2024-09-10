@@ -35,6 +35,8 @@
 #include "cdev_sgdma.h"
 #include "xdma_thread.h"
 
+#define WRITE_DEVICE_DEFAULT "/dev/xdma0_h2c_0"
+
 /* Module Parameters */
 unsigned int h2c_timeout = 10;
 module_param(h2c_timeout, uint, 0644);
@@ -416,7 +418,7 @@ ssize_t char_sgdma_drv_access_write(void)
 
 	/* find matching file struct */
 	struct file *filp;
-	filp = filp_open("/dev/xdma_h2c_0", O_RDWR, 0);
+	filp = filp_open(WRITE_DEVICE_DEFAULT, O_RDWR, 0);
 	if(IS_ERR(filp))
 	{
 		printk(KERN_ERR "Failed to open device driver file\n");
