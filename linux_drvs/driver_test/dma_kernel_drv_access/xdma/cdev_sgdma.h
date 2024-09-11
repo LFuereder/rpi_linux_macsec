@@ -79,6 +79,6 @@ struct xdma_performance_ioctl {
 /// @param pos optional position offset, which can be added on top of the current flash-memory (on the FPGA) position.
 
 /// @return returns the number of transmitted bytes or -EEXIST in case of an error while trying to access the file pointer.
-ssize_t char_sgdma_drv_access_write(void);
+ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos);
 
 #endif /* _XDMA_IOCALLS_POSIX_H_ */

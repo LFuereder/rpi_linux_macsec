@@ -8,6 +8,6 @@
 #include <linux/file.h>
 #include <linux/export.h>
 
-extern ssize_t char_sgdma_drv_access_write(void);
+extern ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos);
 
 #endif
