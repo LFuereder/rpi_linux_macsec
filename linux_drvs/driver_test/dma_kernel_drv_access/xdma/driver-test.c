@@ -1,13 +1,15 @@
 #include "driver-test.h"
 #include "cdev_sgdma.h"
 
+#define DEFAULT_BUFFER_SIZE 128
+
 /* Meta Information */
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Lukas Fuereder");
 MODULE_DESCRIPTION(
 	"Generic Test Driver, if probed accesses the gpio_driver and modifies its current entry.");
 
-const char buffer[128] = {
+const char src_buffer[DEFAULT_BUFFER_SIZE] = {
 	0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x11, 0x22, 0x33, 0xDE, 0xAD, 0xBE,
 	0xEF, 0x00, 0x44, 0x55, 0x66, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x77,
 	0x88, 0x99, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0xAA, 0xBB, 0xCC,
@@ -25,12 +27,31 @@ const char buffer[128] = {
  * @brief This function is called, when the module is loaded into the kernel
  */
 static int __init my_init(void)
-{
+{	
 	printk("file_access - Loading driver\n");
+
 	loff_t pos = 0;
-	drv_access_char_sgdma_write(&buffer[0], sizeof(buffer), &pos);
+
+	/* writing data to the FPGA */
+	drv_access_char_sgdma_write(&src_buffer[0], DEFAULT_BUFFER_SIZE, &pos);
+
+	/* reading data from the FPGA */
+	const char* dst_buffer = kmalloc(DEFAULT_BUFFER_SIZE, GFP_KERNEL);
+	if(dst_buffer == NULL) goto READ_ERR;
+
+	printk(KERN_INFO "Old values: \n");
+	printk("0x%x, 0x%x, 0x%x, 0x%x\n", dst_buffer[0], dst_buffer[1], dst_buffer[2], dst_buffer[3]);
+
+	drv_access_char_sgdma_read(dst_buffer, DEFAULT_BUFFER_SIZE, &pos);
+
+	printk(KERN_INFO "New Values: \n");
+	printk("0x%x, 0x%x, 0x%x, 0x%x\n", dst_buffer[0], dst_buffer[1], dst_buffer[2], dst_buffer[3]);
 
 	return 0;
+
+READ_ERR:
+	printk(KERN_ERR "Failed to allocate destination buffer\n");
+	return -ENOMEM;
 }
 
 /**

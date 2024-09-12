@@ -36,6 +36,7 @@
 #include "xdma_thread.h"
 
 #define WRITE_DEVICE_DEFAULT "/dev/xdma0_h2c_0"
+#define READ_DEVICE_DEFAULT "/dev/xdma0_c2h_0"
 
 /* Module Parameters */
 unsigned int h2c_timeout = 10;
@@ -562,9 +563,10 @@ static ssize_t drv_access_sgdma_read_write(struct file *file,
 	return res;
 }
 
-/// @brief Entry point for cross driver dma-to-pcie access. This functions requires simmilar
+/// @brief Entry point for cross-driver dma-to-pcie access. This functions requires simmilar
 ///		   parameters as the user-space API with the major difference being the buffer pointer,
-///        which must origin in the kernel space memory!
+///        which must origin in the kernel-space memory! Following the opening of the associated 
+///		   default device, this function submits a write request with a scatterlist to the FPGA.
 ///
 /// @param buf This buffer is supplied by a different linux kernel module and has to be allocated
 ///		   	   in the the kernel space memory.
@@ -580,7 +582,7 @@ ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos)
 	struct file *filp;
 	filp = filp_open(WRITE_DEVICE_DEFAULT, O_RDWR, 0);
 	if (IS_ERR(filp)) {
-		printk(KERN_ERR "Failed to open device driver file\n");
+		printk(KERN_ERR "Failed to open device driver file (write job)\n");
 		goto FILP_ERROR;
 	}
 
@@ -595,9 +597,40 @@ ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos)
 FILP_ERROR:
 	return -EEXIST;
 }
-
 EXPORT_SYMBOL(drv_access_char_sgdma_write);
 
+/// @brief Entry point for cross-driver dma-to-pcie access. This function requires similar 
+///		   parameters to as the user-space API with the major difference being the buffer pointer, 
+///		   which must origin in the kernel-space memory! Following the opening of the associated 
+///		   default device, this functions submits a read request from the FPGA.
+/// @param buf This buffer is used to store the incoming data from the FPGA. It must be provided by 
+///		   the using linux kernel module.
+/// @param count Number of bytes, which shall be read from the FPGA into the buffer.
+/// @param pos DRAM offset in the FPGA, which shall be taken into account while reading the data.
+/// @return Returns the number of read bytes or in case of an internal error returns the
+///			negative return-code -EEXIST.
+ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos)
+{
+	printk(KERN_INFO "xdma driver now in sgdma read function (drv access)\n");
+
+	/* find matching file struct */
+	struct file *filp;
+	filp = filp_open(READ_DEVICE_DEFAULT, O_RDWR, 0);
+	if (IS_ERR(filp)) {
+		printk(KERN_ERR "Failed to open device driver file (read job)\n");
+		goto FILP_ERROR;
+	}
+
+	ssize_t rv = drv_access_sgdma_read_write(filp, buf, count, pos, 0);
+
+	filp_close(filp, NULL);
+
+	return rv;
+
+FILP_ERROR:
+	return -EEXIST;
+}
+EXPORT_SYMBOL(drv_access_char_sgdma_read);
 
 
 
