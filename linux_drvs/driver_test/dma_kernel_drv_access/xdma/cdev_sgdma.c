@@ -363,19 +363,13 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 	struct xdma_engine *engine;
 	struct xdma_io_cb cb;
 
-	printk("[ INFO ] Still alive\n");
-
 	rv = xcdev_check(__func__, xcdev, 1);
-
-	printk("[ INFO ] Still alive 1\n");
 
 	if (rv < 0)
 		return rv;
 	xdev = xcdev->xdev;
 	engine = xcdev->engine;
-
-	printk("[ INFO ] Still alive 2\n");
-
+	
 	dbg_tfr("file 0x%p, priv 0x%p, buf 0x%p,%llu, pos %llu, W %d, %s.\n",
 		file, file->private_data, buf, (u64)count, (u64)*pos, write,
 		engine->name);
@@ -386,16 +380,11 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 		return -EINVAL;
 	}
 
-	printk("[ INFO ] Still alive 3\n");
-	printk(KERN_INFO "pos pointer: %p\n", pos);
-
 	rv = check_transfer_align(engine, buf, count, *pos, 1);
 	if (rv) {
 		pr_info("Invalid transfer alignment detected\n");
 		return rv;
 	}
-
-	printk("[ INFO ] Still alive 4\n");
 
 	memset(&cb, 0, sizeof(struct xdma_io_cb));
 	cb.buf = (char __user *)buf;
@@ -403,13 +392,9 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 	cb.ep_addr = (u64)*pos;
 	cb.write = write;
 
-	printk("[ INFO ] Still alive 5\n");
-
 	rv = char_sgdma_map_user_buf_to_sgl(&cb, write);
 	if (rv < 0)
 		return rv;
-
-	printk("[ INFO ] Still alive 6\n");
 
 	res = xdma_xfer_submit(xdev, engine->channel, write, *pos, &cb.sgt, 0,
 			       write ? h2c_timeout * 1000 : c2h_timeout * 1000);

@@ -83,6 +83,16 @@ struct xdma_performance_ioctl {
 /// @return returns the number of transmitted bytes or -EEXIST in case of an error while trying to access the file pointer.
 ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos);
 
+/// @brief drv_access_read represents an interface for access to the xdma pci driver within the linux kernel space.
+///		   This function does not contain any implementation for copy from/to userspace and can therefore not be used 
+///		   in user space applications. For kernel space applications it works identical to the .write callback function 
+///		   of the cdev_ctrl LKM.
+
+/// @param buf pointer to the buffer, which shall be used for the received data (only valid for kernel memory) 
+/// @param count number of bytes, which are expected
+/// @param pos optional position offset, which can be added on top of the current flash-memory (on the FPGA) position.
+
+/// @return returns the number of transmitted bytes or -EEXIST in case of an error while trying to access the file pointer.
 ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos);
 
 #endif /* _XDMA_IOCALLS_POSIX_H_ */
