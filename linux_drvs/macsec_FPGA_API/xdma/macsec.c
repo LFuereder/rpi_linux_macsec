@@ -557,10 +557,37 @@ static struct aead_request *macsec_alloc_req(struct crypto_aead *tfm,
 
 static ssize_t macsec_encrypt_on_HW(struct sk_buff *skb)
 {
+	printk("[ INFO ] now in MACsec encrypt on HW\n");
+
 	ssize_t ret;
 	loff_t pos = 0;
 	
-	ret = drv_access_char_sgdma_write(skb->data, skb->data_len, &pos);
+	unsigned char *frame;
+    int frame_len;
+    unsigned char *dma_buffer;
+	
+	/* Get the Ethernet frame (header + payload) */
+    frame = skb->data;
+    frame_len = skb->len;
+
+	dma_buffer = kmalloc(frame_len, GFP_KERNEL | GFP_DMA);
+    if (!dma_buffer) {
+        pr_err("Failed to allocate DMA-safe buffer\n");
+        return -ENOMEM;
+    }
+
+	/* Copy the entire Ethernet frame into the DMA-safe buffer */
+    memcpy(dma_buffer, frame, frame_len);
+	
+	for(int i=0; i<frame_len;i++)
+	{
+		printk("%x", dma_buffer[i]);	
+	}
+	printk("\n");
+
+	ret = drv_access_char_sgdma_write(frame, frame_len, &pos);
+
+	kfree(dma_buffer);
 
 	return ret;
 }
@@ -676,14 +703,9 @@ static struct sk_buff *macsec_encrypt(struct sk_buff *skb,
 
 	if (tx_sc->encrypt) 
 	{
-		int len = skb->len - macsec_hdr_len(sci_present) - secy->icv_len;
-		
-		if(!HW_AEAD_AVAILABLE)
-		{
-			aead_request_set_crypt(req, sg, sg, len, iv);
-			aead_request_set_ad(req, macsec_hdr_len(sci_present));
-		}
-
+		int len = skb->len - macsec_hdr_len(sci_present) - secy->icv_len;		
+		aead_request_set_crypt(req, sg, sg, len, iv);
+		aead_request_set_ad(req, macsec_hdr_len(sci_present));
 	} else {
 		aead_request_set_crypt(req, sg, sg, 0, iv);
 		aead_request_set_ad(req, skb->len - secy->icv_len);
@@ -723,7 +745,7 @@ static struct sk_buff *macsec_encrypt(struct sk_buff *skb,
 	aead_request_free(req);
 	macsec_txsa_put(tx_sa);
 
-return skb;
+	return skb;
 }
 
 static bool macsec_post_decrypt(struct sk_buff *skb, struct macsec_secy *secy,

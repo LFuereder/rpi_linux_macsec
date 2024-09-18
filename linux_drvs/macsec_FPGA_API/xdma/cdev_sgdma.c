@@ -27,7 +27,6 @@
 #include <linux/wait.h>
 #include <linux/kthread.h>
 #include <linux/version.h>
-#include <linux/mutex.h>
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 16, 0)
 #include <linux/uio.h>
@@ -39,9 +38,6 @@
 
 #define WRITE_DEVICE_DEFAULT "/dev/xdma0_h2c_0"
 #define READ_DEVICE_DEFAULT "/dev/xdma0_c2h_0"
-
-static struct mutex write_dev_lock;
-static struct mutex read_dev_lock;
 
 /* Module Parameters */
 unsigned int h2c_timeout = 10;
@@ -570,9 +566,6 @@ ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos)
 {
 	printk(KERN_INFO "xdma driver now in sgdma write function (drv access)\n");
 
-	mutex_lock(&write_dev_lock);
-	printk("[ INFO ] write_dev_lock locked\n");
-
 	/* find matching file struct */
 	struct file *filp;
 	filp = filp_open(WRITE_DEVICE_DEFAULT, O_RDWR, 0);
@@ -587,8 +580,6 @@ ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos)
 
 	filp_close(filp, NULL);
 
-	mutex_unlock(&write_dev_lock);
-	printk("[ INFO ] write_dev_lock unlocked\n");
 	return rv;
 
 FILP_ERROR:
@@ -610,10 +601,6 @@ ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos)
 {
 	printk(KERN_INFO "xdma driver now in sgdma read function (drv access)\n");
 
-
-	mutex_lock(&read_dev_lock);
-	printk("[ INFO ] read_dev_lock locked\n");
-
 	/* find matching file struct */
 	struct file *filp;
 	filp = filp_open(READ_DEVICE_DEFAULT, O_RDWR, 0);
@@ -626,14 +613,17 @@ ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos)
 
 	filp_close(filp, NULL);
 
-	mutex_unlock(&read_dev_lock);
-	printk("[ INFO ] read_dev_lock unlocked\n");
 	return rv;
 
 FILP_ERROR:
 	return -EEXIST;
 }
 EXPORT_SYMBOL(drv_access_char_sgdma_read);
+
+
+
+
+
 
 
 
@@ -1080,11 +1070,5 @@ static const struct file_operations sgdma_fops = {
 
 void cdev_sgdma_init(struct xdma_cdev *xcdev)
 {
-	mutex_init(&write_dev_lock);
-	printk("[ INFO ] write_dev_lock mutex initialized");
-	
-	mutex_init(&read_dev_lock);
-	printk("[ INFO ] read_dev_lock mutex initialized");
-
 	cdev_init(&xcdev->cdev, &sgdma_fops);
 }
