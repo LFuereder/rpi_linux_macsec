@@ -9,8 +9,6 @@
 #include <linux/export.h>
 
 /* cross-driver API */
-
-extern ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos);
-extern ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos);
+extern ssize_t egress_thread_add_work(const char *buf, size_t count);
 
 #endif

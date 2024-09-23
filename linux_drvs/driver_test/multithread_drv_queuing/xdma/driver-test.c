@@ -6,8 +6,7 @@
 /* Meta Information */
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Lukas Fuereder");
-MODULE_DESCRIPTION(
-	"Generic Test Driver, if probed accesses the gpio_driver and modifies its current entry.");
+MODULE_DESCRIPTION("Generic Test Driver, if probed accesses the gpio_driver and modifies its current entry.");
 
 const char src_buffer[DEFAULT_BUFFER_SIZE] = {
 	0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x11, 0x22, 0x33, 0xDE, 0xAD, 0xBE,
@@ -30,28 +29,10 @@ static int __init my_init(void)
 {	
 	printk("file_access - Loading driver\n");
 
-	loff_t pos = 0;
-
 	/* writing data to the FPGA */
-	drv_access_char_sgdma_write(&src_buffer[0], DEFAULT_BUFFER_SIZE, &pos);
-
-	/* reading data from the FPGA */
-	const char* dst_buffer = kmalloc(DEFAULT_BUFFER_SIZE, GFP_KERNEL);
-	if(dst_buffer == NULL) goto READ_ERR;
-
-	printk(KERN_INFO "Old values: \n");
-	printk("0x%x, 0x%x, 0x%x, 0x%x\n", dst_buffer[0], dst_buffer[1], dst_buffer[2], dst_buffer[3]);
-
-	drv_access_char_sgdma_read(dst_buffer, DEFAULT_BUFFER_SIZE, &pos);
-
-	printk(KERN_INFO "New Values: \n");
-	printk("0x%x, 0x%x, 0x%x, 0x%x\n", dst_buffer[0], dst_buffer[1], dst_buffer[2], dst_buffer[3]);
-
+	egress_thread_add_work(&src_buffer[0], DEFAULT_BUFFER_SIZE);
+	printk("[ INFO ] egress thread add sucessfull\n");
 	return 0;
-
-READ_ERR:
-	printk(KERN_ERR "Failed to allocate destination buffer\n");
-	return -ENOMEM;
 }
 
 /**
