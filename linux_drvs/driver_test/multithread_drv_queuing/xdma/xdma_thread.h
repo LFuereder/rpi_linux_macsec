@@ -102,7 +102,7 @@ struct xdma_kthread {
 	int (*finit)(struct xdma_kthread *);
 	/**  thread pending handler */
 	int (*fpending)(struct list_head *);
-	/**  thread peocessing handler */
+	/**  thread processing handler */
 	int (*fproc)(struct list_head *);
 	/**  thread done handler */
 	int (*fdone)(struct xdma_kthread *);
