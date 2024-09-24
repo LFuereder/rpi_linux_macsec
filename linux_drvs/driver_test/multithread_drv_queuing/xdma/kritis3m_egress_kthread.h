@@ -49,6 +49,6 @@ struct kritis3m_queue_element
 ssize_t egress_thread_add_work(const char *buf, size_t count);
 
 /* XDMA cross-driver API */
-//extern ssize_t drv_access_char_sgdma_write(struct xdma_cdev *xcdev, const char *buf, size_t count, loff_t *pos);
+extern ssize_t drv_access_char_sgdma_write(struct xdma_cdev *xcdev, const char *buf, size_t count, loff_t *pos);
 
 #endif

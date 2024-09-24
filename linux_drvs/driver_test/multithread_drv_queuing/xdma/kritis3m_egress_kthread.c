@@ -47,29 +47,83 @@ DATA_ALLOC_ERROR:
 }
 EXPORT_SYMBOL(egress_thread_add_work);
 
+
+
+static inline int kritis3m_work_pending(void)
+{
+	struct list_head *work_item, *next;
+
+	/* any work items assigned to this thread? */
+	if (list_empty(&WORK_LIST))
+	{
+		printk("[ INFO ] currently 0 elements in work list\n");
+		return 0;
+	}
+	
+	int num_of_entries=0;
+	/* any work item has pending work to do? */
+	list_for_each_safe(work_item, next, &WORK_LIST) 
+	{
+		num_of_entries++;
+	}
+
+	printk("[ INFO ] currently %d elements in work list\n", num_of_entries);
+	return (num_of_entries ? 1 : 0);
+}
+
+static size_t process_work_item(struct kritis3m_queue_element* work_item)
+{
+	struct xdma_cdev *xcdev = (struct xdma_cdev *) egress_driver->filp->private_data;
+	loff_t pos = 0;
+
+	printk("[ INFO ] processing work item with %ld byte\n", work_item->data_len);
+	return drv_access_char_sgdma_write(xcdev, work_item->data_buf, work_item->data_len, &pos);
+}
+
 static int egress_thread_main(void * thread_nr) 
 {
-	//struct xdma_cdev *xcdev = (struct xdma_cdev *)egress_driver->filp->private_data;
-	//loff_t pos=0;
-	int i = 0;
+	struct list_head *iterator, *next;
+	struct kritis3m_queue_element* work_item;
+
 	while(!kthread_should_stop())
 	{
 		msleep(1000);
 
-		struct list_head* tmp_ptr;
-		list_for_each(tmp_ptr, &WORK_LIST)
+		/* lock thread to add element to the work list */
+		spin_lock(&egress_driver->lock);
+		
+		if(kritis3m_work_pending())
 		{
-			i++;
+			list_for_each_safe(iterator, next, &WORK_LIST)
+			{
+				/*execute DMA transfer of data */
+				work_item = list_entry(iterator, struct kritis3m_queue_element, list);
+				
+				spin_unlock(&egress_driver->lock);
+				ssize_t rv = process_work_item(work_item);
+				if(rv < 0) goto DMA_TRANSMIT_ERR;
+
+				/*delete current element from work list */
+				printk("[ INFO ] removing work element from list\n");
+				spin_lock(&egress_driver->lock);
+
+				list_del(&work_item->list);
+				egress_driver->work_cnt--;
+				kfree(work_item);
+			}
 		}
-		
-		printk("[ INFO ] current work_list total count: %d\n", i);
-		i=0;
-		
-		//drv_access_char_sgdma_write(xcdev, src_buffer, DEFAULT_BUFFER_SIZE, &pos);
+
+		/* unlock thread after processing work items */
+		spin_unlock(&egress_driver->lock);
 	}
 
 	return 0;
+
+DMA_TRANSMIT_ERR:
+	printk(KERN_ERR "DMA transmission unsuccessful\n");
+	return -1;
 }
+
 
 static ssize_t init_cdev_fileptr(void)
 {
@@ -86,7 +140,6 @@ static ssize_t init_cdev_fileptr(void)
 FILP_ERROR:
 	return -EEXIST;
 }
-
 
 static int __init init_egress_driver(void)
 {	
