@@ -21,11 +21,11 @@
 
 #include <uapi/linux/if_macsec.h>
 
+#include "kritis3m_egress_kthread.h"
+
 #define HW_AEAD_AVAILABLE 1
 
-/* cross-driver XDMA API */
-
-extern ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos);
-extern ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos);
+/* API to the egress queue */
+ssize_t egress_thread_add_work(const char *buf, size_t count);
 
 #endif

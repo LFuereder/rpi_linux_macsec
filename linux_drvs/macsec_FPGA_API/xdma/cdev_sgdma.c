@@ -27,7 +27,6 @@
 #include <linux/wait.h>
 #include <linux/kthread.h>
 #include <linux/version.h>
-
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 16, 0)
 #include <linux/uio.h>
 #endif
@@ -370,7 +369,7 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 		return rv;
 	xdev = xcdev->xdev;
 	engine = xcdev->engine;
-
+	
 	dbg_tfr("file 0x%p, priv 0x%p, buf 0x%p,%llu, pos %llu, W %d, %s.\n",
 		file, file->private_data, buf, (u64)count, (u64)*pos, write,
 		engine->name);
@@ -380,8 +379,6 @@ static ssize_t char_sgdma_read_write(struct file *file, const char __user *buf,
 		pr_err("r/w mismatch. W %d, dir %d.\n", write, engine->dir);
 		return -EINVAL;
 	}
-
-	printk(KERN_INFO "pos pointer: %p\n", pos);
 
 	rv = check_transfer_align(engine, buf, count, *pos, 1);
 	if (rv) {
@@ -500,13 +497,12 @@ static int char_sgdma_map_kernel_buf_to_sgl(struct xdma_io_cb *cb, bool write)
 /// @brief Generic sgdma read/write function modified for kernel internal driver access
 ///		   with transfer submission and memory mapping of the kernel-space memory to 
 ///		   scatterlist.
-static ssize_t drv_access_sgdma_read_write(struct file *file,
-					   const char __user *buf, size_t count,
+static ssize_t drv_access_sgdma_read_write(struct xdma_cdev *xcdev,
+					   const char *buf, size_t count,
 					   loff_t *pos, bool write)
 {
 	int rv;
 	ssize_t res = 0;
-	struct xdma_cdev *xcdev = (struct xdma_cdev *)file->private_data;
 	struct xdma_dev *xdev;
 	struct xdma_engine *engine;
 	struct xdma_io_cb cb;
@@ -517,10 +513,6 @@ static ssize_t drv_access_sgdma_read_write(struct file *file,
 		return rv;
 	xdev = xcdev->xdev;
 	engine = xcdev->engine;
-
-	dbg_tfr("file 0x%p, priv 0x%p, buf 0x%p,%llu, pos %llu, W %d, %s.\n",
-		file, file->private_data, buf, (u64)count, (u64)*pos, write,
-		engine->name);
 
 	if ((write && engine->dir != DMA_TO_DEVICE) ||
 	    (!write && engine->dir != DMA_FROM_DEVICE)) {
@@ -562,28 +554,11 @@ static ssize_t drv_access_sgdma_read_write(struct file *file,
 /// @param pos DRAM offset on the FPGA, which should be taken into account.
 /// @return Returns the number of transmitted bytes or in case of an internal error returns the
 ///			negative return-code -EEXIST.
-ssize_t drv_access_char_sgdma_write(const char *buf, size_t count, loff_t *pos)
+ssize_t drv_access_char_sgdma_write(struct xdma_cdev *xcdev, const char *buf, size_t count, loff_t *pos)
 {
 	printk(KERN_INFO "xdma driver now in sgdma write function (drv access)\n");
 
-	/* find matching file struct */
-	struct file *filp;
-	filp = filp_open(WRITE_DEVICE_DEFAULT, O_RDWR, 0);
-	if (IS_ERR(filp)) {
-		printk(KERN_ERR "Failed to open device driver file (write job)\n");
-		goto FILP_ERROR;
-	}
-
-	printk(KERN_INFO "File opened, associated f_op: %p\n", filp->f_op);
-
-	ssize_t rv = drv_access_sgdma_read_write(filp, buf, count, pos, 1);
-
-	filp_close(filp, NULL);
-
-	return rv;
-
-FILP_ERROR:
-	return -EEXIST;
+	return drv_access_sgdma_read_write(xcdev, buf, count, pos, 1);
 }
 EXPORT_SYMBOL(drv_access_char_sgdma_write);
 
@@ -609,7 +584,8 @@ ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos)
 		goto FILP_ERROR;
 	}
 
-	ssize_t rv = drv_access_sgdma_read_write(filp, buf, count, pos, 0);
+	struct xdma_cdev *xcdev = (struct xdma_cdev *)filp->private_data;
+	ssize_t rv = drv_access_sgdma_read_write(xcdev, buf, count, pos, 0);
 
 	filp_close(filp, NULL);
 
@@ -619,11 +595,6 @@ FILP_ERROR:
 	return -EEXIST;
 }
 EXPORT_SYMBOL(drv_access_char_sgdma_read);
-
-
-
-
-
 
 
 
@@ -1047,7 +1018,6 @@ static int char_sgdma_close(struct inode *inode, struct file *file)
 
 	return 0;
 }
-
 static const struct file_operations sgdma_fops = {
 	.owner = THIS_MODULE,
 	.open = char_sgdma_open,

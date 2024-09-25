@@ -560,11 +560,10 @@ static ssize_t macsec_encrypt_on_HW(struct sk_buff *skb)
 	printk("[ INFO ] now in MACsec encrypt on HW\n");
 
 	ssize_t ret;
-	loff_t pos = 0;
 	
 	unsigned char *frame;
     int frame_len;
-    unsigned char *dma_buffer;
+    char *dma_buffer;
 	
 	/* Get the Ethernet frame (header + payload) */
     frame = skb->data;
@@ -579,13 +578,7 @@ static ssize_t macsec_encrypt_on_HW(struct sk_buff *skb)
 	/* Copy the entire Ethernet frame into the DMA-safe buffer */
     memcpy(dma_buffer, frame, frame_len);
 	
-	for(int i=0; i<frame_len;i++)
-	{
-		printk("%x", dma_buffer[i]);	
-	}
-	printk("\n");
-
-	ret = drv_access_char_sgdma_write(frame, frame_len, &pos);
+	ret = egress_thread_add_work(dma_buffer, frame_len);
 
 	kfree(dma_buffer);
 

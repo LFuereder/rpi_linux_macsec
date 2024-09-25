@@ -21,8 +21,9 @@ EXTRA_CFLAGS := -I$(topdir)/include $(XVC_FLAGS)
 ifneq ($(KERNELRELEASE),)
 	$(TARGET_MODULE)-objs := libxdma.o xdma_cdev.o cdev_ctrl.o cdev_events.o cdev_sgdma.o cdev_xvc.o cdev_bypass.o xdma_mod.o xdma_thread.o
 	obj-m := $(TARGET_MODULE).o
+	obj-m += kritis3m_egress_kthread.o
 	obj-m += macsec.o
-	obj-m += driver-test.o
+	
 else
 	BUILDSYSTEM_DIR:=../../../rootfs/lib/modules/6.6.25-v8-16k+/build
 	PWD:=$(shell pwd)
