@@ -23,6 +23,7 @@ ifneq ($(KERNELRELEASE),)
 	obj-m := $(TARGET_MODULE).o
 	obj-m += kritis3m_egress_kthread.o
 	obj-m += driver-test.o
+	obj-m += macsec.o
 	
 else
 	BUILDSYSTEM_DIR:=../../../../rootfs/lib/modules/6.6.25-v8-16k+/build
@@ -35,6 +36,5 @@ clean:
 	@/bin/rm -f *.ko modules.order *.mod.c *.o *.o.ur-safe .*.o.cmd
 
 new: clean all
-
 
 endif

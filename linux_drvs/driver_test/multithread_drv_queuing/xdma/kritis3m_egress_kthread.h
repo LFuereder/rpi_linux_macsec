@@ -30,10 +30,13 @@ struct kritis3m_egress_queue
     /* kernel task structure associated with thread */
     struct task_struct *egress_kthread;
 
-    /* file pointer to access the xdma character driver */
-    struct file *filp;
+    /* file pointer to access the xdma character driver write OP */
+    struct file *filp_write;
 
-    /*  thread work list count */
+    /* file pointer to access the xdma character driver read OP */
+    struct file *filp_read;
+
+    /* thread work list count */
 	unsigned int work_cnt;
 
     /* thread wait queue parameter */
@@ -56,5 +59,6 @@ ssize_t egress_thread_add_work(const char *buf, size_t count);
 
 /* Output XDMA cross-driver API */
 extern ssize_t drv_access_char_sgdma_write(struct xdma_cdev *xcdev, const char *buf, size_t count, loff_t *pos);
+extern ssize_t drv_access_char_sgdma_read(struct xdma_cdev *xcdev, const char *buf, size_t count, loff_t *pos);
 
 #endif

@@ -2,12 +2,12 @@
 
 #define DEFAULT_BUFFER_SIZE 128
 #define WRITE_DEVICE_DEFAULT "/dev/xdma0_h2c_0"
+#define READ_DEVICE_DEFAULT "/dev/xdma0_c2h_0"
 
 /* Meta Information */
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Lukas Fuereder");
-MODULE_DESCRIPTION(
-	"Linux Kernel Thread, which processes network packets and transmits them to via DMA.");
+MODULE_DESCRIPTION("Linux Kernel Thread, which processes network packets and transmits them to via DMA.");
 
 /* Global Variables */
 static struct kritis3m_egress_queue *egress_driver;
@@ -81,16 +81,32 @@ static inline void kritis3m_thread_sleep(void)
 	wait_event_interruptible(egress_driver->waitq, (egress_driver->work_cnt != 0));
 }
 
-static size_t process_work_item(struct kritis3m_queue_element *work_item)
+static size_t readback_work_item(struct kritis3m_queue_element *work_item)
 {
-	struct xdma_cdev *xcdev =
-		(struct xdma_cdev *)egress_driver->filp->private_data;
+	struct xdma_cdev *xcdev = (struct xdma_cdev *)egress_driver->filp_read->private_data;
 	loff_t pos = 0;
+	ssize_t rv = 0;
 
-	printk("[ INFO ] processing work item with %ld byte\n",
-	       work_item->data_len);
-	return drv_access_char_sgdma_write(xcdev, work_item->data_buf,
-					   work_item->data_len, &pos);
+	printk("[ INFO ] reading back work item with %ld byte\n", work_item->data_len);
+	rv = drv_access_char_sgdma_read(xcdev, work_item->data_buf, work_item->data_len, &pos);
+
+	printk("%s\n", work_item->data_buf);
+	
+	return rv;
+}
+
+static size_t transmit_work_item(struct kritis3m_queue_element *work_item)
+{
+	struct xdma_cdev *xcdev = (struct xdma_cdev *)egress_driver->filp_write->private_data;
+	loff_t pos = 0;
+	ssize_t rv = 0;
+
+	printk("[ INFO ] processing work item with %ld byte\n", work_item->data_len);
+	rv = drv_access_char_sgdma_write(xcdev, work_item->data_buf, work_item->data_len, &pos);
+
+	printk("%s\n", work_item->data_buf);
+
+	return rv;
 }
 
 static int egress_thread_main(void *thread_nr)
@@ -113,13 +129,16 @@ static int egress_thread_main(void *thread_nr)
 		list_for_each_safe(iterator, next, &WORK_LIST) 
 		{
 			/*execute DMA transfer of data */
-			work_item = list_entry(
-				iterator, struct kritis3m_queue_element, list);
+			work_item = list_entry(iterator, struct kritis3m_queue_element, list);
 
 			spin_unlock(&egress_driver->lock);
-			ssize_t rv = process_work_item(work_item);
-			if (rv < 0)
-				goto DMA_TRANSMIT_ERR;
+			ssize_t rv = transmit_work_item(work_item);
+			if (rv < 0) goto DMA_TRANSMIT_ERR;
+
+			msleep(1000);
+
+			rv = readback_work_item(work_item);
+			if(rv < 0) goto DMA_TRANSMIT_ERR;
 
 			/*delete current element from work list */
 			printk("[ INFO ] removing work element from list\n");
@@ -143,15 +162,24 @@ DMA_TRANSMIT_ERR:
 
 static ssize_t init_cdev_fileptr(void)
 {
-	egress_driver->filp = filp_open(WRITE_DEVICE_DEFAULT, O_RDWR, 0);
-	if (IS_ERR(egress_driver->filp)) {
+	egress_driver->filp_write = filp_open(WRITE_DEVICE_DEFAULT, O_RDWR, 0);
+	if (IS_ERR(egress_driver->filp_write)) {
 		printk(KERN_ERR
 		       "Failed to open device driver file (write job)\n");
 		goto FILP_ERROR;
 	}
 
 	printk(KERN_INFO "File opened, associated f_op: %p\n",
-	       egress_driver->filp->f_op);
+	       egress_driver->filp_write->f_op);
+
+	egress_driver->filp_read = filp_open(READ_DEVICE_DEFAULT, O_RDWR, 0);
+	if (IS_ERR(egress_driver->filp_read)) {
+		printk(KERN_ERR "Failed to open device driver file (write job)\n");
+		goto FILP_ERROR;
+	}
+
+	printk(KERN_INFO "File opened, associated f_op: %p\n",
+	       egress_driver->filp_read->f_op);
 
 	return 0;
 
@@ -200,7 +228,8 @@ static int __init init_egress_driver(void)
 	return 0;
 
 THP_ERROR:
-	filp_close(egress_driver->filp, NULL);
+	filp_close(egress_driver->filp_write, NULL);
+	filp_close(egress_driver->filp_read, NULL);
 
 FILP_ERROR:
 	return -1;
@@ -212,8 +241,10 @@ static void __exit exit_egress_driver(void)
 
 	kthread_stop(egress_driver->egress_kthread);
 
-	if (!IS_ERR(egress_driver->filp)) {
-		filp_close(egress_driver->filp, NULL);
+	if (!IS_ERR(egress_driver->filp_write)) 
+	{
+		filp_close(egress_driver->filp_write, NULL);
+		filp_close(egress_driver->filp_read, NULL);
 	}
 
 	kfree(egress_driver);

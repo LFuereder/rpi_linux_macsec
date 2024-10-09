@@ -572,27 +572,13 @@ EXPORT_SYMBOL(drv_access_char_sgdma_write);
 /// @param pos DRAM offset in the FPGA, which shall be taken into account while reading the data.
 /// @return Returns the number of read bytes or in case of an internal error returns the
 ///			negative return-code -EEXIST.
-ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos)
+ssize_t drv_access_char_sgdma_read(struct xdma_cdev *xcdev, const char *buf, size_t count, loff_t *pos)
 {
 	printk(KERN_INFO "xdma driver now in sgdma read function (drv access)\n");
 
-	/* find matching file struct */
-	struct file *filp;
-	filp = filp_open(READ_DEVICE_DEFAULT, O_RDWR, 0);
-	if (IS_ERR(filp)) {
-		printk(KERN_ERR "Failed to open device driver file (read job)\n");
-		goto FILP_ERROR;
-	}
-
-	struct xdma_cdev *xcdev = (struct xdma_cdev *)filp->private_data;
 	ssize_t rv = drv_access_sgdma_read_write(xcdev, buf, count, pos, 0);
 
-	filp_close(filp, NULL);
-
 	return rv;
-
-FILP_ERROR:
-	return -EEXIST;
 }
 EXPORT_SYMBOL(drv_access_char_sgdma_read);
 

@@ -89,11 +89,12 @@ ssize_t drv_access_char_sgdma_write(struct xdma_cdev *xcdev, const char *buf, si
 ///		   in user space applications. For kernel space applications it works identical to the .write callback function 
 ///		   of the cdev_ctrl LKM.
 
+/// @param xcdev reference to the xdma character device, which shall be used for transmission 
 /// @param buf pointer to the buffer, which shall be used for the received data (only valid for kernel memory) 
 /// @param count number of bytes, which are expected
 /// @param pos optional position offset, which can be added on top of the current flash-memory (on the FPGA) position.
 
 /// @return returns the number of transmitted bytes or -EEXIST in case of an error while trying to access the file pointer.
-ssize_t drv_access_char_sgdma_read(const char *buf, size_t count, loff_t *pos);
+ssize_t drv_access_char_sgdma_read(struct xdma_cdev *xcdev, const char *buf, size_t count, loff_t *pos);
 
 #endif /* _XDMA_IOCALLS_POSIX_H_ */
