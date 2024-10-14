@@ -1,6 +1,6 @@
 #include "kritis3m_egress_kthread.h"
 
-#define DEFAULT_BUFFER_SIZE 128
+#define KRITIS3M_HEADER_SIZE 16
 #define WRITE_DEVICE_DEFAULT "/dev/xdma0_h2c_0"
 #define READ_DEVICE_DEFAULT "/dev/xdma0_c2h_0"
 
@@ -23,16 +23,19 @@ ssize_t egress_thread_add_work(const char *buf, size_t count)
 	/* lock thread to add element to the work list */
 	spin_lock(&egress_driver->lock);
 
-	new_element =
-		kmalloc(sizeof(struct kritis3m_queue_element), GFP_KERNEL);
+	new_element = kmalloc(sizeof(struct kritis3m_queue_element), GFP_KERNEL);
 	if (new_element == NULL)
 		return -ENOMEM;
 
-	new_element->data_buf = kmalloc((count * sizeof(char)), GFP_KERNEL);
+	new_element->data_buf = kmalloc(((count + KRITIS3M_HEADER_SIZE) * sizeof(char)), GFP_KERNEL);
 	if (new_element->data_buf == NULL)
 		goto DATA_ALLOC_ERROR;
 
-	memcpy(new_element->data_buf, buf, count);
+	/* size parameter in the KRITIS3M header field*/ 
+	memcpy(new_element->data_buf, &count, 4);
+
+	/* acutal data */
+	memcpy((new_element->data_buf + KRITIS3M_HEADER_SIZE), buf, count);
 
 	new_element->data_len = count;
 
