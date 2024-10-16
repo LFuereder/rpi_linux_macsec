@@ -1,6 +1,7 @@
 #include "kritis3m_egress_kthread.h"
 
 #define KRITIS3M_HEADER_SIZE 16
+#define KRITIS3M_SIZE_FIELD_OFFSET 12 
 #define WRITE_DEVICE_DEFAULT "/dev/xdma0_h2c_0"
 #define READ_DEVICE_DEFAULT "/dev/xdma0_c2h_0"
 
@@ -27,14 +28,15 @@ ssize_t egress_thread_add_work(const char *buf, size_t count)
 	if (new_element == NULL)
 		return -ENOMEM;
 
-	new_element->data_buf = kmalloc(((count + KRITIS3M_HEADER_SIZE) * sizeof(char)), GFP_KERNEL);
+	/* allocate message buffer and set it to zero */
+	new_element->data_buf = kzalloc(((count + KRITIS3M_HEADER_SIZE) * sizeof(char)), GFP_KERNEL);
 	if (new_element->data_buf == NULL)
 		goto DATA_ALLOC_ERROR;
 
-	/* size parameter in the KRITIS3M header field*/ 
-	memcpy(new_element->data_buf, &count, 4);
+	/* set size parameter in the KRITIS3M header field */ 
+	memcpy((new_element->data_buf + KRITIS3M_SIZE_FIELD_OFFSET), &count, 4);
 
-	/* acutal data */
+	/* copy acutal data */
 	memcpy((new_element->data_buf + KRITIS3M_HEADER_SIZE), buf, count);
 
 	new_element->data_len = count;
@@ -131,7 +133,7 @@ static int egress_thread_main(void *thread_nr)
 
 		list_for_each_safe(iterator, next, &WORK_LIST) 
 		{
-			/*execute DMA transfer of data */
+			/* execute DMA transfer of data */
 			work_item = list_entry(iterator, struct kritis3m_queue_element, list);
 
 			spin_unlock(&egress_driver->lock);
@@ -143,12 +145,14 @@ static int egress_thread_main(void *thread_nr)
 			rv = readback_work_item(work_item);
 			if(rv < 0) goto DMA_TRANSMIT_ERR;
 
-			/*delete current element from work list */
+			/* delete current element from work list */
 			printk("[ INFO ] removing work element from list\n");
 			spin_lock(&egress_driver->lock);
-
 			list_del(&work_item->list);
 			egress_driver->work_cnt--;
+
+			/* free allocated memory of the work item */
+			kfree(work_item->data_buf);
 			kfree(work_item);
 		}
 
