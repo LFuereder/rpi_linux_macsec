@@ -23,7 +23,7 @@ static struct cdev my_device;
 /**
  * @brief Read data out of the buffer
  */
-static ssize_t driver_read(struct file *File, char *user_buffer, size_t count, loff_t *offs) {
+static ssize_t driver_read(struct file *File, char __user *user_buffer, size_t count, loff_t *offs) {
 	int to_copy, not_copied, delta;
 	char tmp[3] = " \n";
 
@@ -46,7 +46,7 @@ static ssize_t driver_read(struct file *File, char *user_buffer, size_t count, l
 /**
  * @brief Write data to buffer
  */
-static ssize_t driver_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs) {
+static ssize_t driver_write(struct file *File, const char __user *user_buffer, size_t count, loff_t *offs) {
 	int to_copy, not_copied, delta;
 	char value;
 
